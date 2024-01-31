@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/widgets/bottom_nav_bar.dart';
 import 'package:neo_delta/widgets/greeting.dart';
+import 'package:neo_delta/widgets/recurring_delta_grid.dart';
 import 'package:neo_delta/widgets/sentence_summary.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -28,7 +30,7 @@ class _HomePageState extends State<HomePage> {
           automaticallyImplyLeading: false,
           backgroundColor: mainTheme.colorScheme.background),
       body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        margin: const EdgeInsets.only(top: 15, left: 30, right: 30, bottom: 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -37,9 +39,9 @@ class _HomePageState extends State<HomePage> {
             GestureDetector(
                 onTap: () => {
                       // TODO: Route to Landmark Page
-                      print("Pressed")
                     },
                 child: Container(
+                    margin: const EdgeInsets.only(bottom: 25),
                     height: 150,
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -60,11 +62,12 @@ class _HomePageState extends State<HomePage> {
                         decoration: BoxDecoration(
                           color: mainTheme.colorScheme.inversePrimary
                               .withOpacity(0.5),
+                          // TODO: Changes color when clicked
                           borderRadius:
                               const BorderRadius.all(Radius.circular(5)),
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Container(
                               padding: const EdgeInsets.all(15),
@@ -73,6 +76,7 @@ class _HomePageState extends State<HomePage> {
                             const Text("LANDMARK DELTAS")
                           ],
                         )))),
+            const RecurringDeltaGrid()
           ],
         ),
       ),

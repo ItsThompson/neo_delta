@@ -29,7 +29,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return SafeArea(
         child: Container(
             height: 70,
-            margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+            margin: const EdgeInsets.only(left:30, right: 30, bottom: 30),
+            // margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
             child: Stack(
               children: <Widget>[
                 Container(
