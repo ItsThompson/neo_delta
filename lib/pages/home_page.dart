@@ -29,17 +29,50 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: mainTheme.colorScheme.background),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Greeting(),
-            SentenceSummary(),
-            Text('Craft beautiful UIs'),
-            Expanded(
-              child: FittedBox(
-                child: FlutterLogo(),
-              ),
-            ),
+            const Greeting(),
+            const SentenceSummary(),
+            GestureDetector(
+                onTap: () => {
+                      // TODO: Route to Landmark Page
+                      print("Pressed")
+                    },
+                child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: mainTheme.colorScheme.surface,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                mainTheme.colorScheme.surface.withOpacity(0.5),
+                            offset: const Offset(5, 10),
+                            blurRadius: 20,
+                          )
+                        ]),
+                    child: Container(
+                        margin: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: mainTheme.colorScheme.inversePrimary
+                              .withOpacity(0.5),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(15),
+                              child: Image.asset("assets/landmark.png"),
+                            ),
+                            const Text("LANDMARK DELTAS")
+                          ],
+                        )))),
           ],
         ),
       ),
