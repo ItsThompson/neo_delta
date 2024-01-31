@@ -22,6 +22,8 @@ List<String> cheerfulPhrases = [
   "In the middle of difficulty lies opportunity."
 ];
 
+
+// TODO: May need to be stateful because the number needs to update when user completes recurring deltas.
 class SentenceSummary extends StatelessWidget {
   const SentenceSummary({super.key});
 
