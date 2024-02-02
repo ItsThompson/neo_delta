@@ -24,7 +24,6 @@ class LandmarkDeltaButton extends StatelessWidget {
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: mainTheme.colorScheme.inversePrimary.withOpacity(0.5),
-                  // TODO: Changes color when clicked
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
                 ),
                 child: Row(

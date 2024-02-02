@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
 
 class NavBarItem {
   final String name;
   final String imageSrc;
+  final String route;
 
-  NavBarItem({required this.name, required this.imageSrc});
+  NavBarItem({required this.name, required this.imageSrc, required this.route});
 }
 
 List<NavBarItem> bottomNavBarItems = [
-  NavBarItem(name: "Home", imageSrc: "assets/navbar/Home.png"),
-  NavBarItem(name: "Stats", imageSrc: "assets/navbar/Stats.png"),
-  NavBarItem(name: "New Delta", imageSrc: "assets/navbar/NewDelta.png"),
-  NavBarItem(name: "Social", imageSrc: "assets/navbar/Social.png"),
-  NavBarItem(name: "Profile", imageSrc: "assets/navbar/Profile.png"),
+  NavBarItem(name: "Home", imageSrc: "assets/navbar/Home.png", route: "/"),
+  NavBarItem(
+      name: "Stats", imageSrc: "assets/navbar/Stats.png", route: "/stats"),
+  NavBarItem(
+      name: "New Delta", imageSrc: "assets/navbar/NewDelta.png", route: "/"),
+  NavBarItem(name: "Social", imageSrc: "assets/navbar/Social.png", route: "/"),
+  NavBarItem(
+      name: "Profile", imageSrc: "assets/navbar/Profile.png", route: "/"),
 ];
 
 class BottomNavBar extends StatefulWidget {
@@ -29,10 +34,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return SafeArea(
         child: Container(
             height: 70,
-            margin: const EdgeInsets.only(left:30, right: 30, bottom: 30),
-            // margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+            margin: const EdgeInsets.only(left: 10, right: 10, bottom: 30),
             child: Stack(
               children: <Widget>[
+                // Background
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 5),
                   height: 60,
@@ -50,10 +55,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         )
                       ]),
                 ),
+                // Buttons
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Individual Button
                     children: List.generate(bottomNavBarItems.length, (index) {
                       double boxSize = 50;
                       double edgeInset = 12.5;
@@ -63,13 +70,28 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         edgeInset = 0;
                       }
                       return SizedBox(
-                        height: boxSize,
-                        width: boxSize,
-                        child: Container(
-                          margin: EdgeInsets.all(edgeInset),
-                          child: Image.asset(bottomNavBarItems[index].imageSrc),
-                        ),
-                      );
+                          height: boxSize,
+                          width: boxSize,
+                          child: GestureDetector(
+                            onTap: () {
+                              final String currentUri = GoRouter.of(context)
+                                  .routerDelegate
+                                  .currentConfiguration
+                                  .last
+                                  .route
+                                  .path
+                                  .toString();
+                              if (currentUri !=
+                                  bottomNavBarItems[index].route) {
+                                context.push(bottomNavBarItems[index].route);
+                              }
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(edgeInset),
+                              child: Image.asset(
+                                  bottomNavBarItems[index].imageSrc),
+                            ),
+                          ));
                     }),
                   ),
                 )

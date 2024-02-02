@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
-import 'package:neo_delta/widgets/bottom_nav_bar.dart';
 import 'package:neo_delta/widgets/greeting.dart';
 import 'package:neo_delta/widgets/landmark_delta_button.dart';
 import 'package:neo_delta/widgets/recurring_delta_grid.dart';
@@ -27,7 +26,7 @@ class HomePage extends StatelessWidget {
           backgroundColor: mainTheme.colorScheme.background),
       body: Container(
         margin:
-            const EdgeInsets.only(top: 15, left: 30, right: 30, bottom: 100),
+            const EdgeInsets.only(top: 15, left: 30, right: 30),
         child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -38,7 +37,6 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
