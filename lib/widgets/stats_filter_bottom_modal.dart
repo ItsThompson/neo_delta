@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/stats_filter.dart';
+import 'package:provider/provider.dart';
 
 // src: https://medium.com/@enrico.ori/getting-to-know-flutter-advanced-use-of-modalbottomsheet-38e5ef55d561
-Future<void> statsFilterBottomModal(
-    BuildContext context, StatsFilter statsFilter) async {
+Future<void> statsFilterBottomModal(BuildContext context) async {
   await showModalBottomSheet(
       useRootNavigator: true,
       context: context,
@@ -67,18 +67,35 @@ Future<void> statsFilterBottomModal(
                         Expanded(
                           child: ListView.builder(
                             controller: scrollController,
-                            itemCount: statsFilter.filterList.length,
+                            // itemCount: statsFilter.filterList.length,
+                            itemCount:
+                                context.watch<StatsFilter>().filterList.length,
                             itemBuilder: (context, index) => ListTile(
                               title: index == 0
                                   ? Text(
-                                      statsFilter.filterList[index].name,
+                                      context
+                                          .watch<StatsFilter>()
+                                          .filterList[index]
+                                          .name,
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold),
                                     )
-                                  : Text(statsFilter.filterList[index].name),
+                                  : Text(
+                                      context
+                                          .watch<StatsFilter>()
+                                          .filterList[index]
+                                          .name,
+                                    ),
                               trailing: Checkbox(
-                                value: statsFilter.filterList[index].included,
-                                onChanged: (bool? value) {},
+                                value: context
+                                    .watch<StatsFilter>()
+                                    .filterList[index]
+                                    .included,
+                                onChanged: (bool? value) {
+                                  context
+                                      .watch<StatsFilter>()
+                                      .setIncluded(index, value ?? false);
+                                },
                               ),
                             ),
                           ),
