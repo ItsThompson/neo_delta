@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
-import 'package:neo_delta/models/stats_filter.dart';
+import 'package:neo_delta/pages/pageviews/stats_alltime.dart';
+import 'package:neo_delta/pages/pageviews/stats_month.dart';
+import 'package:neo_delta/pages/pageviews/stats_week.dart';
 import 'package:neo_delta/widgets/stats_filter_bottom_modal.dart';
-import 'package:provider/provider.dart';
 
 enum StatsPageView { month, week, allTime }
+String getPageViewString(StatsPageView pageView) {
+  switch (pageView) {
+    case StatsPageView.month:
+      return "THIS MONTH";
+    case StatsPageView.week:
+      return "THIS WEEK";
+    case StatsPageView.allTime:
+      return "ALL TIME";
+  }
+}
 
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
@@ -13,19 +24,9 @@ class StatsPage extends StatefulWidget {
   State<StatsPage> createState() => _StatsPageState();
 }
 
+
 class _StatsPageState extends State<StatsPage> {
   StatsPageView currentPageView = StatsPageView.month;
-
-  String getPageViewString() {
-    switch (currentPageView) {
-      case StatsPageView.month:
-        return "THIS MONTH";
-      case StatsPageView.week:
-        return "THIS WEEK";
-      case StatsPageView.allTime:
-        return "ALL TIME";
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class _StatsPageState extends State<StatsPage> {
     return Scaffold(
         extendBody: true,
         appBar: AppBar(
-            title: Text(getPageViewString(),
+            title: Text(getPageViewString(currentPageView),
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 32)),
             // leading: Container(
@@ -74,52 +75,10 @@ class _StatsPageState extends State<StatsPage> {
             });
           },
           controller: pageController,
-          children: <Widget>[
-            Container(
-              margin: const EdgeInsets.only(
-                  top: 15, left: 30, right: 30, bottom: 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const Text("heelo, this apge is monff"),
-                  // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
-                  Text(context
-                      .watch<StatsFilter>()
-                      .shouldUpdateStats
-                      .toString()),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                  top: 15, left: 30, right: 30, bottom: 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const Text("weeak"),
-                  // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
-                  Text(context
-                      .watch<StatsFilter>()
-                      .shouldUpdateStats
-                      .toString()),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                  top: 15, left: 30, right: 30, bottom: 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const Text("awl taimmm"),
-                  // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
-                  Text(context
-                      .watch<StatsFilter>()
-                      .shouldUpdateStats
-                      .toString()),
-                ],
-              ),
-            ),
+          children: const <Widget>[
+            StatsPageViewMonth(),
+            StatsPageViewWeek(),
+            StatsPageViewAllTime(),
           ],
         ));
   }
