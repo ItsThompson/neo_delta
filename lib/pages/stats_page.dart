@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/stats_filter.dart';
 import 'package:neo_delta/widgets/stats_filter_bottom_modal.dart';
@@ -14,15 +13,15 @@ class StatsPage extends StatelessWidget {
       appBar: AppBar(
           title: const Text("THIS MONTH",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32)),
-          leading: Container(
-              margin: const EdgeInsets.only(left: 5),
-              child: IconButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                  ))),
+          // leading: Container(
+          //     margin: const EdgeInsets.only(left: 5),
+          //     child: IconButton(
+          //         onPressed: () {
+          //           context.pop();
+          //         },
+          //         icon: const Icon(
+          //           Icons.arrow_back_ios,
+          //         ))),
           actions: [
             Container(
               margin: const EdgeInsets.only(right: 5),

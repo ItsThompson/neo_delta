@@ -83,7 +83,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                                   .toString();
                               if (currentUri !=
                                   bottomNavBarItems[index].route) {
-                                context.push(bottomNavBarItems[index].route);
+                                context.replace(bottomNavBarItems[index].route);
                               }
                             },
                             child: Container(
