@@ -17,7 +17,7 @@ class StatsFilter extends ChangeNotifier {
   UnmodifiableListView<StatsFilterItem> get filterList =>
       UnmodifiableListView(_filterList);
 
-  void setFilterList(List<StatsFilterItem> filterList) {
+  set filterList(List<StatsFilterItem> filterList) {
     _filterList = filterList;
     notifyListeners();
   }

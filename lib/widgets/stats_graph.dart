@@ -6,15 +6,15 @@ import 'package:neo_delta/pages/stats_page.dart';
 // src: https://github.com/imaNNeo/fl_chart/blob/main/example/lib/presentation/samples/line/line_chart_sample2.dart
 class StatsGraph extends StatefulWidget {
   final StatsPageView graphPage;
-  const StatsGraph({super.key, required this.graphPage});
+  final GraphData graphData;
+  const StatsGraph(
+      {super.key, required this.graphPage, required this.graphData});
 
   @override
   State<StatsGraph> createState() => _StatsGraphState();
 }
 
 class _StatsGraphState extends State<StatsGraph> {
-  bool hasNegativeY = true;
-
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
@@ -34,6 +34,8 @@ class _StatsGraphState extends State<StatsGraph> {
   }
 
   LineChartData mainData() {
+    (double, double) range = widget.graphData.getRange();
+    bool hasNegativeY = widget.graphData.hasNegativeValues();
     return LineChartData(
       gridData: const FlGridData(show: false),
       titlesData: FlTitlesData(
@@ -61,7 +63,6 @@ class _StatsGraphState extends State<StatsGraph> {
                   strokeWidth: 2)
             ])
           : const ExtraLinesData(),
-
       borderData: FlBorderData(
           show: true,
           border: Border(
@@ -72,29 +73,15 @@ class _StatsGraphState extends State<StatsGraph> {
                   : BorderSide(
                       color: mainTheme.colorScheme.inversePrimary, width: 2))),
       minX: 0,
-      maxX: 11,
-      minY: -5,
-      // minY: 0,
-      maxY: 5,
+      maxX: widget.graphData.progress.length.toDouble(),
+      minY: range.$1,
+      maxY: range.$2,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, -3),
-            FlSpot(2.6, -2),
-            FlSpot(4.9, -5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-
-            // FlSpot(0, 3),
-            // FlSpot(2.6, 2),
-            // FlSpot(4.9, 5),
-            // FlSpot(6.8, 3.1),
-            // FlSpot(8, 4),
-            // FlSpot(9.5, 3),
-            // FlSpot(11, 4),
-          ],
+          spots: List.generate(
+              widget.graphData.progress.length,
+              (index) =>
+                  FlSpot(index.toDouble(), widget.graphData.progress[index])),
           isCurved: true,
           color: mainTheme.colorScheme.inversePrimary,
           barWidth: 1.5,

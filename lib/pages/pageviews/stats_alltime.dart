@@ -4,6 +4,15 @@ import 'package:neo_delta/pages/stats_page.dart';
 import 'package:neo_delta/widgets/stats_graph.dart';
 import 'package:provider/provider.dart';
 
+GraphData graphData = GraphData(progress: [
+  -2.95,
+  -0.16,
+  -1.24,
+  -3.59,
+  -1.32,
+  4.46,
+  -1.01,
+]);
 
 class StatsPageViewAllTime extends StatefulWidget {
   const StatsPageViewAllTime({super.key});
@@ -21,9 +30,10 @@ class _StatsPageViewAllTimeState extends State<StatsPageViewAllTime> {
         Container(
             width: double.infinity,
             margin: const EdgeInsets.symmetric(horizontal: 30),
-            child: Text("heelo, this paidge is awl taimmm.\nshouldUpdateStats: ${context.watch<StatsFilter>().shouldUpdateStats.toString()}") // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
+            child: Text(
+                "heelo, this paije is awl taimmm.\nshouldUpdateStats: ${context.watch<StatsFilter>().shouldUpdateStats.toString()}") // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
             ),
-        const StatsGraph(graphPage: StatsPageView.allTime)
+        StatsGraph(graphPage: StatsPageView.allTime, graphData: graphData)
       ],
     );
   }

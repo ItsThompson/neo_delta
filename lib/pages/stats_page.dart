@@ -20,6 +20,35 @@ String getPageViewString(StatsPageView pageView) {
   }
 }
 
+class GraphData {
+  final List<double> progress;
+
+  bool hasNegativeValues() {
+    for (var i = 0; i < progress.length; i++) {
+      if (progress[i] < 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  (double, double) getRange() {
+    double max = progress[0];
+    double min = progress[0];
+    for (var i = 1; i < progress.length; i++) {
+      if (progress[i] > max) {
+        max = progress[i];
+      }
+      if (progress[i] < min) {
+        min = progress[i];
+      }
+    }
+    return (min, max);
+  }
+
+  GraphData({required this.progress});
+}
+
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
 
@@ -33,15 +62,7 @@ class _StatsPageState extends State<StatsPage> {
   @override
   Widget build(BuildContext context) {
     final PageController pageController = PageController();
-    // return MultiProvider(
-    //     providers: [
-    //       ChangeNotifierProvider(
-    //         create: (context) => StatsFilter(),
-    //       )
-    //     ],
-    return ChangeNotifierProvider(
-        create: (context) => StatsFilter(),
-        child: Scaffold(
+    return Scaffold(
             extendBody: true,
             appBar: AppBar(
                 title: Text(getPageViewString(currentPageView),
@@ -90,6 +111,6 @@ class _StatsPageState extends State<StatsPage> {
                 StatsPageViewWeek(),
                 StatsPageViewAllTime(),
               ],
-            )));
+            ));
   }
 }
