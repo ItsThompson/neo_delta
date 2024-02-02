@@ -10,32 +10,31 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
       context: context,
       isScrollControlled: true,
       isDismissible: false,
+      enableDrag: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
       builder: (context) {
-
         List<StatsFilterItem> filterList =
             context.read<StatsFilter>().filterList;
-
-        void setIncluded(int index, bool? value){
-            if (index == 0) {
-              for (var i = 0;
-                  i < filterList.length;
-                  i++) {
-                filterList[i].included = value!;
-              }
-            } else {
-              if (value == false){
-                filterList[0].included = false;
-              }
-              filterList[index].included = value!;
+        void setIncluded(int index, bool? value) {
+          if (index == 0) {
+            for (var i = 0; i < filterList.length; i++) {
+              filterList[i].included = value!;
             }
+          } else {
+            if (value == false) {
+              filterList[0].included = false;
+            }
+            filterList[index].included = value!;
+          }
         }
+
         return DraggableScrollableSheet(
-            initialChildSize: 0.6,
+            shouldCloseOnMinExtent: false,
+            initialChildSize: 0.8,
             minChildSize: 0.4,
-            maxChildSize: 0.8,
+            maxChildSize: 0.9,
             expand: false,
             builder: (context, scrollController) => StatefulBuilder(
                   builder: (context, setState) => SafeArea(
@@ -106,6 +105,10 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                                       context
                                           .read<StatsFilter>()
                                           .setFilterList(filterList);
+
+                                      context
+                                          .read<StatsFilter>()
+                                          .shouldUpdateStats = true;
                                       Navigator.pop(context);
                                     },
                                     child: Text("APPLY NOW",

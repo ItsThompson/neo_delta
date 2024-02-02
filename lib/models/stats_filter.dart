@@ -13,6 +13,8 @@ class StatsFilter extends ChangeNotifier {
     StatsFilterItem(name: "DELTA 6", included: true),
   ];
 
+  bool shouldUpdateStats = false;
+
   /// An unmodifiable view of the items in the cart.
   UnmodifiableListView<StatsFilterItem> get filterList =>
       UnmodifiableListView(_filterList);
