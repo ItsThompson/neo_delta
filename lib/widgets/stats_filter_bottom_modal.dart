@@ -32,7 +32,7 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
 
         return DraggableScrollableSheet(
             shouldCloseOnMinExtent: false,
-            initialChildSize: 0.8,
+            initialChildSize: 0.9,
             minChildSize: 0.4,
             maxChildSize: 0.9,
             expand: false,
