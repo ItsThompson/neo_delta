@@ -17,9 +17,17 @@ final GoRouter router = GoRouter(
       },
       routes: [
         GoRoute(
-          path: "/",
-          builder: (context, state) => const HomePage(),
-        ),
+            path: "/",
+            builder: (context, state) => const HomePage(),
+            // routes: [
+            //   GoRoute(path: "/landmark-deltas"),
+            //   GoRoute(
+            //     path: "/recurring-deltas/:id",
+            //     builder: (context, state) =>
+            //         const RecurringDeltaSummary(id: state.pathParameters['id']),
+            //   )
+            // ]
+            ),
         GoRoute(
           path: "/stats",
           builder: (context, state) => const StatsPage(),

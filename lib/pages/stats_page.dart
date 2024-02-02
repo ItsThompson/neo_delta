@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
-import 'package:neo_delta/models/stats_filter.dart';
 import 'package:neo_delta/widgets/stats_filter_bottom_modal.dart';
 
-class StatsPage extends StatelessWidget {
+class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
+
+  @override
+  State<StatsPage> createState() => _StatsPageState();
+}
+
+class _StatsPageState extends State<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +37,6 @@ class StatsPage extends StatelessWidget {
                 child: IconButton(
                   onPressed: () {
                     statsFilterBottomModal(context);
-                    // showModalBottomSheet<void>(
-                    //   useRootNavigator: true,
-                    //   context: context,
-                    //   backgroundColor: mainTheme.colorScheme.surface,
-                    //   builder: (BuildContext context) =>
-                    //       const SafeArea(child: StatsFilterBottomModal()),
-                    // );
                   },
                   icon: Icon(
                     Icons.filter_list,
@@ -56,9 +54,13 @@ class StatsPage extends StatelessWidget {
             const EdgeInsets.only(top: 15, left: 30, right: 30, bottom: 100),
         child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[Text("heelo")],
+          children: <Widget>[
+            Text("heelo"),
+          ],
         ),
       ),
     );
   }
 }
+
+

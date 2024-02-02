@@ -9,127 +9,132 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
       useRootNavigator: true,
       context: context,
       isScrollControlled: true,
-      isDismissible: true,
+      isDismissible: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
-      builder: (context) => DraggableScrollableSheet(
+      builder: (context) {
+
+        List<StatsFilterItem> filterList =
+            context.read<StatsFilter>().filterList;
+
+        void setIncluded(int index, bool? value){
+            if (index == 0) {
+              for (var i = 0;
+                  i < filterList.length;
+                  i++) {
+                filterList[i].included = value!;
+              }
+            } else {
+              if (value == false){
+                filterList[0].included = false;
+              }
+              filterList[index].included = value!;
+            }
+        }
+        return DraggableScrollableSheet(
             initialChildSize: 0.6,
             minChildSize: 0.4,
             maxChildSize: 0.8,
             expand: false,
-            builder: (context, scrollController) => SafeArea(
-                child: Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(
-                        top: 5, right: 25, left: 25, bottom: 25),
-                    // margin: const EdgeInsets.all(25),
-                    child: Column(
-                      children: <Widget>[
-                        Center(
-                          child: Container(
-                            width: 50,
-                            height: 4,
-                            margin: const EdgeInsets.symmetric(vertical: 15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: mainTheme.colorScheme.inversePrimary
-                                  .withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            const Text("Filter",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20)),
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(
-                                Icons.close,
-                              ),
-                            )
-                          ],
-                        ),
-                        // Dividor
-                        Container(
+            builder: (context, scrollController) => StatefulBuilder(
+                  builder: (context, setState) => SafeArea(
+                      child: Container(
                           width: double.infinity,
-                          height: 2,
-                          margin: const EdgeInsets.symmetric(vertical: 2),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: mainTheme.colorScheme.inversePrimary,
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            controller: scrollController,
-                            // itemCount: statsFilter.filterList.length,
-                            itemCount:
-                                context.watch<StatsFilter>().filterList.length,
-                            itemBuilder: (context, index) => ListTile(
-                              title: index == 0
-                                  ? Text(
-                                      context
-                                          .watch<StatsFilter>()
-                                          .filterList[index]
-                                          .name,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                  : Text(
-                                      context
-                                          .watch<StatsFilter>()
-                                          .filterList[index]
-                                          .name,
-                                    ),
-                              trailing: Checkbox(
-                                value: context
-                                    .watch<StatsFilter>()
-                                    .filterList[index]
-                                    .included,
-                                onChanged: (bool? value) {
-                                  context
-                                      .watch<StatsFilter>()
-                                      .setIncluded(index, value ?? false);
-                                },
+                          margin: const EdgeInsets.only(
+                              top: 5, right: 25, left: 25, bottom: 25),
+                          // margin: const EdgeInsets.all(25),
+                          child: Column(
+                            children: <Widget>[
+                              Center(
+                                child: Container(
+                                  width: 50,
+                                  height: 4,
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: mainTheme.colorScheme.inversePrimary
+                                        .withOpacity(0.5),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 10),
-                          child: TextButton(
-                              style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 100),
-                                  backgroundColor:
-                                      mainTheme.colorScheme.primary),
-                              onPressed: () {},
-                              child: Text("APPLY NOW",
+                              const Text("Filter",
                                   style: TextStyle(
-                                      fontSize: 20,
-                                      color: mainTheme
-                                          .colorScheme.inversePrimary))),
-                        ),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20)),
+                              // Divider
+                              Container(
+                                width: double.infinity,
+                                height: 2,
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: mainTheme.colorScheme.inversePrimary,
+                                ),
+                              ),
+                              Expanded(
+                                child: ListView.builder(
+                                  controller: scrollController,
+                                  itemCount: filterList.length,
+                                  itemBuilder: (context, index) => ListTile(
+                                    title: Text(filterList[index].name,
+                                        style: index == 0
+                                            ? const TextStyle(
+                                                fontWeight: FontWeight.bold)
+                                            : const TextStyle()),
+                                    trailing: Checkbox(
+                                      value: filterList[index].included,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          setIncluded(index, value);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 10),
+                                child: TextButton(
+                                    style: TextButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 100),
+                                        backgroundColor:
+                                            mainTheme.colorScheme.primary),
+                                    onPressed: () {
+                                      context
+                                          .read<StatsFilter>()
+                                          .setFilterList(filterList);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("APPLY NOW",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: mainTheme
+                                                .colorScheme.inversePrimary))),
+                              ),
 
-                        Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            child: TextButton(
-                                style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 80),
-                                    backgroundColor:
-                                        mainTheme.colorScheme.inversePrimary),
-                                onPressed: () {},
-                                child: Text("RESET",
-                                    style: TextStyle(
-                                        color: mainTheme.colorScheme.background,
-                                        fontSize: 20))))
-                      ],
-                    ))),
-          ));
+                              Container(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  child: TextButton(
+                                      style: TextButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 80),
+                                          backgroundColor: mainTheme
+                                              .colorScheme.inversePrimary),
+                                      onPressed: () {
+                                        setState(() {
+                                          setIncluded(0, false);
+                                        });
+                                      },
+                                      child: Text("RESET",
+                                          style: TextStyle(
+                                              color: mainTheme
+                                                  .colorScheme.background,
+                                              fontSize: 20))))
+                            ],
+                          ))),
+                ));
+      });
 }
