@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
-import 'package:neo_delta/widgets/greeting.dart';
-import 'package:neo_delta/widgets/landmark_delta_button.dart';
-import 'package:neo_delta/widgets/recurring_delta_grid.dart';
-import 'package:neo_delta/widgets/sentence_summary.dart';
+import 'package:neo_delta/widgets/home/greeting.dart';
+import 'package:neo_delta/widgets/home/landmark_delta_button.dart';
+import 'package:neo_delta/widgets/home/recurring_delta_grid.dart';
+import 'package:neo_delta/widgets/home/sentence_summary.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

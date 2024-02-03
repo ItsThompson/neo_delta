@@ -6,9 +6,9 @@ import 'package:neo_delta/pages/stats_page.dart';
 // src: https://github.com/imaNNeo/fl_chart/blob/main/example/lib/presentation/samples/line/line_chart_sample2.dart
 class StatsGraph extends StatefulWidget {
   final StatsPageView graphPage;
-  final GraphData graphData;
+  final StatsData statsData;
   const StatsGraph(
-      {super.key, required this.graphPage, required this.graphData});
+      {super.key, required this.graphPage, required this.statsData});
 
   @override
   State<StatsGraph> createState() => _StatsGraphState();
@@ -34,8 +34,8 @@ class _StatsGraphState extends State<StatsGraph> {
   }
 
   LineChartData mainData() {
-    (double, double) range = widget.graphData.getRange();
-    bool hasNegativeY = widget.graphData.hasNegativeValues();
+    (double, double) range = widget.statsData.getRange();
+    bool hasNegativeY = widget.statsData.hasNegativeValues();
     return LineChartData(
       gridData: const FlGridData(show: false),
       titlesData: FlTitlesData(
@@ -73,15 +73,15 @@ class _StatsGraphState extends State<StatsGraph> {
                   : BorderSide(
                       color: mainTheme.colorScheme.inversePrimary, width: 2))),
       minX: 0,
-      maxX: widget.graphData.progress.length.toDouble(),
+      maxX: widget.statsData.progress.length.toDouble(),
       minY: range.$1,
       maxY: range.$2,
       lineBarsData: [
         LineChartBarData(
           spots: List.generate(
-              widget.graphData.progress.length,
+              widget.statsData.progress.length,
               (index) =>
-                  FlSpot(index.toDouble(), widget.graphData.progress[index])),
+                  FlSpot(index.toDouble(), widget.statsData.progress[index].$2)),
           isCurved: true,
           color: mainTheme.colorScheme.inversePrimary,
           barWidth: 1.5,
