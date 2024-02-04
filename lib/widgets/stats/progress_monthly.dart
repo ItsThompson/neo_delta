@@ -83,20 +83,21 @@ class _MyWidgetState extends State<MonthlyProgress> {
       return internalBoxGenerator(color, null);
     }
 
-    bool isNegativeValue = false;
     String text;
     double value = widget.statsData.progress[index].$2;
-    if (value > 0) {
+
+    if (value >= 0) {
       text = "+${value.toStringAsFixed(1)}";
     } else {
-      isNegativeValue = true;
       text = value.toStringAsFixed(1);
     }
 
-    if (isNegativeValue) {
+    if (value < 0) {
       color = mainTheme.colorScheme.tertiary.withOpacity(0.5);
-    } else {
+    } else if (value > 0) {
       color = mainTheme.colorScheme.primary.withOpacity(0.5);
+    } else {
+      color = mainTheme.colorScheme.secondary.withOpacity(0.8);
     }
 
     Widget child = Center(
