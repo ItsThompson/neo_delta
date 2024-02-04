@@ -19,7 +19,7 @@ class _StatsPageViewAllTimeState extends State<StatsPageViewAllTime> {
         child: Column(
       children: <Widget>[
         AllTimeProgress(statsData: _statsData),
-        StatsGraph(graphPage: StatsPageView.allTime, statsData: _statsData),
+        StatsGraph(graphPage: StatsPageView.allTime, statsData: _statsData, maxX: _statsData.progress.length),
       ],
     ));
   }

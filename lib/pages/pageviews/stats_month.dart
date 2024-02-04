@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:neo_delta/models/stats_filter.dart';
 import 'package:neo_delta/pages/stats_page.dart';
+import 'package:neo_delta/widgets/stats/progress_monthly.dart';
 import 'package:neo_delta/widgets/stats/stats_graph.dart';
-import 'package:provider/provider.dart';
 
-StatsData _statsData = StatsData.generateFakeData(30, 5, -5);
-
-// StatsData().generateFakeData(30, 5, -5);
+StatsData _statsData = StatsData.generateFakeData(20, 5, -5);
 
 class StatsPageViewMonth extends StatefulWidget {
   const StatsPageViewMonth({super.key});
@@ -21,14 +18,17 @@ class _StatsPageViewMonthState extends State<StatsPageViewMonth> {
     return SafeArea(
         child: Column(
       children: <Widget>[
-        Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 30),
-            child: Text(
-                "heelo, this paije is FFOOHSST OVE THUH MUHNFF.\nshouldUpdateStats: ${context.watch<StatsFilter>().shouldUpdateStats.toString()}") // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
-            ),
-        StatsGraph(graphPage: StatsPageView.month, statsData: _statsData),
+        MonthlyProgress(statsData: _statsData),
+        StatsGraph(
+            graphPage: StatsPageView.month, statsData: _statsData, maxX: 30),
       ],
     ));
   }
 }
+
+        // Container(
+        //     width: double.infinity,
+        //     margin: const EdgeInsets.symmetric(horizontal: 30),
+        //     child: Text(
+        //         "heelo, this paije is FFOOHSST OVE THUH MUHNFF.\nshouldUpdateStats: ${context.watch<StatsFilter>().shouldUpdateStats.toString()}") // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
+        //     ),

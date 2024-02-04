@@ -10,14 +10,14 @@ import 'package:neo_delta/widgets/stats/page_view_indicator.dart';
 import 'package:neo_delta/widgets/stats/stats_filter_bottom_modal.dart';
 import 'package:provider/provider.dart';
 
-enum StatsPageView { month, week, allTime }
+enum StatsPageView { week, month, allTime }
 
 String getPageViewString(StatsPageView pageView) {
   switch (pageView) {
-    case StatsPageView.month:
-      return "THIS MONTH";
     case StatsPageView.week:
       return "THIS WEEK";
+    case StatsPageView.month:
+      return "THIS MONTH";
     case StatsPageView.allTime:
       return "ALL TIME";
   }
@@ -35,7 +35,7 @@ class StatsData {
     return false;
   }
 
-  (double, double) getRange() {
+  (double, double) getMinMax() {
     double maximum = progress[0].$2;
     double minimum = progress[0].$2;
     for (var i = 1; i < progress.length; i++) {
@@ -82,12 +82,13 @@ class StatsPage extends StatefulWidget {
 }
 
 class _StatsPageState extends State<StatsPage> {
-  StatsPageView currentPageView = StatsPageView.month;
+  // Is set as the first pageview
+  StatsPageView currentPageView = StatsPageView.week;
 
   // src: https://stackoverflow.com/questions/60583201/how-to-get-the-number-of-pages-in-pageview-to-be-used-in-a-line-indicator-in-flu
   final List<Widget> _pages = [
-    const StatsPageViewMonth(),
     const StatsPageViewWeek(),
+    const StatsPageViewMonth(),
     const StatsPageViewAllTime(),
   ];
 

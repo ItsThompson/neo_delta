@@ -7,8 +7,9 @@ import 'package:neo_delta/pages/stats_page.dart';
 class StatsGraph extends StatefulWidget {
   final StatsPageView graphPage;
   final StatsData statsData;
+  final int maxX;
   const StatsGraph(
-      {super.key, required this.graphPage, required this.statsData});
+      {super.key, required this.graphPage, required this.statsData, required this.maxX});
 
   @override
   State<StatsGraph> createState() => _StatsGraphState();
@@ -34,7 +35,7 @@ class _StatsGraphState extends State<StatsGraph> {
   }
 
   LineChartData mainData() {
-    (double, double) range = widget.statsData.getRange();
+    (double, double) range = widget.statsData.getMinMax();
     bool hasNegativeY = widget.statsData.hasNegativeValues();
     return LineChartData(
       gridData: const FlGridData(show: false),
@@ -73,15 +74,15 @@ class _StatsGraphState extends State<StatsGraph> {
                   : BorderSide(
                       color: mainTheme.colorScheme.inversePrimary, width: 2))),
       minX: 0,
-      maxX: widget.statsData.progress.length.toDouble(),
+      maxX: widget.maxX.toDouble(),
       minY: range.$1,
       maxY: range.$2,
       lineBarsData: [
         LineChartBarData(
           spots: List.generate(
               widget.statsData.progress.length,
-              (index) =>
-                  FlSpot(index.toDouble(), widget.statsData.progress[index].$2)),
+              (index) => FlSpot(
+                  index.toDouble(), widget.statsData.progress[index].$2)),
           isCurved: true,
           color: mainTheme.colorScheme.inversePrimary,
           barWidth: 1.5,
