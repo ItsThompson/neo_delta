@@ -9,7 +9,7 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
       useRootNavigator: true,
       context: context,
       isScrollControlled: true,
-      isDismissible: true,
+      isDismissible: false,
       enableDrag: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
@@ -17,6 +17,17 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
       builder: (context) {
         return Consumer<StatsFilter>(
           builder: (context, statsFilter, child) {
+            bool showText = false;
+
+            bool hasTrue(List<StatsFilterItem> filterList) {
+              for (var i = 0; i < filterList.length; i++) {
+                if (filterList[i].included == true) {
+                  return true;
+                }
+              }
+              return false;
+            }
+
             List<StatsFilterItem> filterList = statsFilter.filterList;
             // context.read<StatsFilter>().filterList;
             void setIncluded(int index, bool? value) {
@@ -39,8 +50,8 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                 maxChildSize: 0.9,
                 expand: false,
                 builder: (context, scrollController) =>
-                    StatefulBuilder(
-                      builder: (context, setState) => SafeArea(
+                    StatefulBuilder(builder: (context, setState) {
+                      return SafeArea(
                           child: Container(
                               width: double.infinity,
                               margin: const EdgeInsets.only(
@@ -100,6 +111,10 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                                       ),
                                     ),
                                   ),
+                                  showText
+                                      ? Text(
+                                          "Please select at least one delta", style: TextStyle(color: mainTheme.colorScheme.tertiary),)
+                                      : Container(),
                                   Container(
                                     margin: const EdgeInsets.only(top: 10),
                                     child: TextButton(
@@ -109,14 +124,20 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                                             backgroundColor:
                                                 mainTheme.colorScheme.primary),
                                         onPressed: () {
-                                          context
-                                              .read<StatsFilter>()
-                                              .filterList = filterList;
+                                          if (hasTrue(filterList)) {
+                                            context
+                                                .read<StatsFilter>()
+                                                .filterList = filterList;
 
-                                          context
-                                              .read<StatsFilter>()
-                                              .shouldUpdateStats = true;
-                                          Navigator.pop(context);
+                                            context
+                                                .read<StatsFilter>()
+                                                .shouldUpdateStats = true;
+                                            Navigator.pop(context);
+                                          } else {
+                                            setState(() {
+                                              showText = true;
+                                            });
+                                          }
                                         },
                                         child: Text("APPLY NOW",
                                             style: TextStyle(
@@ -146,8 +167,8 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                                                       .colorScheme.background,
                                                   fontSize: 20))))
                                 ],
-                              ))),
-                    ));
+                              )));
+                    }));
           },
         );
       });
