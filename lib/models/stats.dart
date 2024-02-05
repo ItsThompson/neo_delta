@@ -2,6 +2,20 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 
+enum StatsPageView { week, month, allTime }
+
+String getPageViewString(StatsPageView pageView) {
+  switch (pageView) {
+    case StatsPageView.week:
+      return "THIS WEEK";
+    case StatsPageView.month:
+      return "THIS MONTH";
+    case StatsPageView.allTime:
+      return "ALL TIME";
+  }
+}
+
+
 class StatsFilter extends ChangeNotifier {
   List<StatsFilterItem> _filterList = [
     StatsFilterItem(name: "ALL TASKS", included: false),
@@ -30,4 +44,24 @@ class StatsFilterItem {
   bool included;
 
   StatsFilterItem({required this.name, required this.included});
+}
+
+class StatsPageViewIndex extends ChangeNotifier {
+  int _index = 0;
+
+  int get index => _index;
+
+  set index(int newIndex) {
+    _index = newIndex;
+    notifyListeners();
+  }
+
+  int _length = 0;
+
+  int get length => _length;
+
+  set length(int newLength) {
+    _length = newLength;
+    notifyListeners();
+  }
 }

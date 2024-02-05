@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neo_delta/pages/home_page.dart';
+import 'package:neo_delta/pages/landmark_delta.dart';
 import 'package:neo_delta/pages/new_landmark_delta.dart';
 import 'package:neo_delta/pages/new_recurring_delta.dart';
+import 'package:neo_delta/pages/recurring_delta.dart';
 import 'package:neo_delta/pages/stats_page.dart';
 import 'package:neo_delta/widgets/navbar/bottom_nav_bar.dart';
 
@@ -21,14 +23,20 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: "/",
           builder: (context, state) => const HomePage(),
-          // routes: [
-          //   GoRoute(path: "/landmark-deltas"),
-          //   GoRoute(
-          //     path: "/recurring-deltas/:id",
-          //     builder: (context, state) =>
-          //         const RecurringDeltaSummary(id: state.pathParameters['id']),
-          //   )
-          // ]
+          routes: [
+            GoRoute(path: "landmark-deltas",
+
+          builder: (context, state) => const LandmarkDeltaPage(),
+            ),
+            GoRoute(
+              path: "recurring-deltas/:id",
+              builder: (context, state){
+              final id = int.parse(state.pathParameters['id']!);
+                return RecurringDeltaPage(id: id);
+              },
+                  // const RecurringDeltaSummary(id: state.pathParameters['id']),
+            )
+          ]
         ),
         GoRoute(
           path: "/stats",

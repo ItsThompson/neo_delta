@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neo_delta/main_theme.dart';
-import 'package:neo_delta/models/stats_filter.dart';
-import 'package:neo_delta/models/stats_page_view_index.dart';
+import 'package:neo_delta/models/stats.dart';
 import 'package:neo_delta/routes/router_config.dart';
 import 'package:provider/provider.dart';
 
@@ -19,10 +18,6 @@ void main() {
       ],
       child: const MyApp(),
     ),
-    //   ChangeNotifierProvider(
-    // create: (context) => StatsFilter(),
-    // child: const MyApp(),
-    //   )
   );
 }
 

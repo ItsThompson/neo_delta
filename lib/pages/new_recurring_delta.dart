@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
+import 'package:neo_delta/models/recurring_delta.dart';
 
-enum DeltaInterval { day, week, month }
 
 class NewRecurringPage extends StatefulWidget {
   const NewRecurringPage({super.key});
@@ -214,7 +214,8 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
               showText = true;
             });
           } else {
-            print( "\n task name: $name\n interval: $interval\n frequency: $frequency\n weighting: $weighting"); // TODO: Business logic to write to database.
+            print(
+                "\n task name: $name\n interval: $interval\n frequency: $frequency\n weighting: $weighting"); // TODO: Business logic to write to database.
             context.pop();
           }
         },

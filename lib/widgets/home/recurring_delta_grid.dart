@@ -1,6 +1,44 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
+import 'package:neo_delta/models/recurring_delta.dart';
+
+List<RecurringDelta> recurringDeltas = [
+  RecurringDelta(
+    id: 0,
+    name: "GYM",
+    iconSrc: "assets/landmark.png",
+    deltaInterval: DeltaInterval.week,
+    remainingFrequency: 6,
+    completedToday: false,
+  ),
+  RecurringDelta(
+    id: 1,
+    name: "PIANO",
+    iconSrc: "assets/landmark.png",
+    deltaInterval: DeltaInterval.month,
+    remainingFrequency: 20,
+    completedToday: false,
+  ),
+  RecurringDelta(
+    id: 2,
+    name: "RUN",
+    iconSrc: "assets/landmark.png",
+    deltaInterval: DeltaInterval.week,
+    remainingFrequency: 3,
+    completedToday: false,
+  ),
+  RecurringDelta(
+    id: 3,
+    name: "READ",
+    iconSrc: "assets/landmark.png",
+    deltaInterval: DeltaInterval.day,
+    remainingFrequency: 1,
+    completedToday: false,
+  )
+];
 
 class RecurringDeltaGrid extends StatelessWidget {
   const RecurringDeltaGrid({super.key});
@@ -13,16 +51,16 @@ class RecurringDeltaGrid extends StatelessWidget {
       crossAxisCount: 2,
       mainAxisSpacing: 25,
       crossAxisSpacing: 25,
-      children: List.generate(6, (index) {
-        return RecurringDeltaButton(index: index);
+      children: List.generate(recurringDeltas.length, (index) {
+        return RecurringDeltaButton(initRecurringDelta: recurringDeltas[index]);
       }),
     )));
   }
 }
 
 class RecurringDeltaButton extends StatefulWidget {
-  final int index;
-  const RecurringDeltaButton({super.key, required this.index});
+  final RecurringDelta initRecurringDelta;
+  const RecurringDeltaButton({super.key, required this.initRecurringDelta});
 
   @override
   State<RecurringDeltaButton> createState() => _RecurringDeltaButtonState();
@@ -31,20 +69,122 @@ class RecurringDeltaButton extends StatefulWidget {
 class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
   double _margin = 5;
   bool _isComplete = false;
-
-  bool isComplete(int index) {
-    Random random = Random();
-    return random.nextBool();
+  RecurringDelta recurringDelta = RecurringDelta(
+    id: 0,
+    name: "DELTA NAME",
+    iconSrc: "assets/landmark.png",
+    deltaInterval: DeltaInterval.week,
+    remainingFrequency: 0,
+    completedToday: false,
+  );
+  int _remainingFrequency = 0;
+  int get remainingFrequency => _remainingFrequency;
+  set remainingFrequency(int newRemaining) {
+    if (newRemaining >= 0) {
+      _remainingFrequency = newRemaining;
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _isComplete = isComplete(widget.index);
+    recurringDelta = widget.initRecurringDelta;
+    remainingFrequency = recurringDelta.remainingFrequency;
+    _isComplete = recurringDelta.completedToday;
   }
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Business logic to update database
+    bool canIncrement() {
+      return remainingFrequency + 1 <=
+          widget.initRecurringDelta.remainingFrequency;
+    }
+
+    void incrementRemaining() {
+      if (canIncrement()) {
+        setState(() {
+          _isComplete = false;
+          remainingFrequency += 1;
+        });
+      }
+    }
+
+    void decrementRemaining() {
+      setState(() {
+        _isComplete = true;
+        remainingFrequency -= 1;
+      });
+    }
+
+    Future<void> doubleTapOptionBottomModal() {
+      return showModalBottomSheet<void>(
+        useRootNavigator: true,
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        enableDrag: false,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+        ),
+        builder: (BuildContext context) {
+          return SafeArea(
+              child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+            height: 180,
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Center(
+                  child: Container(
+                    width: 50,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color:
+                          mainTheme.colorScheme.inversePrimary.withOpacity(0.5),
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 15),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      incrementRemaining();
+                    },
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(
+                            mainTheme.colorScheme.secondary)),
+                    child: Text(
+                      "UNDO COMPLETE",
+                      style: TextStyle(
+                          color: mainTheme.colorScheme.inversePrimary,
+                          fontSize: 20),
+                    )),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.push("/recurring-deltas/${recurringDelta.id}");
+                    },
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(
+                            mainTheme.colorScheme.secondary)),
+                    child: Text(
+                      "GO TO DELTA PROFILE",
+                      style: TextStyle(
+                          color: mainTheme.colorScheme.inversePrimary,
+                          fontSize: 20),
+                    )),
+              ],
+            ),
+          ));
+        },
+      );
+    }
+
     return SizedBox(
         height: 150,
         width: double.infinity,
@@ -52,12 +192,15 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
           // Long Press: Mark as complete
           // Double Tap: Go to profile
           onDoubleTap: () {
-            // Navigator.pushNamed(context, '/')
+            // Show modal: Can increment and progress is true
+            if (!canIncrement()){// && _isComplete == false) {
+              context.push("/recurring-deltas/${recurringDelta.id}");
+            } else {
+              doubleTapOptionBottomModal();
+            }
           },
           onLongPress: () {
-            setState(() {
-              _isComplete = !_isComplete;
-            });
+            decrementRemaining();
           },
           onTapDown: (_) {
             setState(() {
@@ -79,7 +222,13 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
               margin: EdgeInsets.all(_margin),
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                color: _isComplete
+                border: Border.all(
+                  width: 10,
+                  color: _isComplete
+                      ? mainTheme.colorScheme.primary
+                      : Colors.transparent,
+                ),
+                color: remainingFrequency == 0
                     ? mainTheme.colorScheme.primary
                     : mainTheme.colorScheme.inversePrimary.withOpacity(0.5),
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
@@ -87,15 +236,17 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text("Delta ${widget.index}"),
+                  Text(recurringDelta.name),
                   SizedBox(
                     height: 80,
                     width: 80,
-                    child: Image.asset("assets/landmark.png"),
+                    child: Image.asset(recurringDelta.iconSrc),
                   ),
-                  const Text(
-                    "3 LEFT THIS WEEK",
-                    style: TextStyle(fontSize: 10),
+                  Text(
+                    remainingFrequency == 0
+                        ? "ALL DONE!"
+                        : "$remainingFrequency LEFT ${getDeltaIntervalString(recurringDelta.deltaInterval)}",
+                    style: const TextStyle(fontSize: 10),
                   )
                 ],
               )),

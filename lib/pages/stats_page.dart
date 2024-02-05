@@ -1,27 +1,13 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
-import 'package:neo_delta/models/stats_page_view_index.dart';
+import 'package:neo_delta/models/stats.dart';
 import 'package:neo_delta/pages/pageviews/stats_alltime.dart';
 import 'package:neo_delta/pages/pageviews/stats_month.dart'; 
 import 'package:neo_delta/pages/pageviews/stats_week.dart';
 import 'package:neo_delta/widgets/stats/page_view_indicator.dart';
 import 'package:neo_delta/widgets/stats/stats_filter_bottom_modal.dart';
 import 'package:provider/provider.dart';
-
-enum StatsPageView { week, month, allTime }
-
-String getPageViewString(StatsPageView pageView) {
-  switch (pageView) {
-    case StatsPageView.week:
-      return "THIS WEEK";
-    case StatsPageView.month:
-      return "THIS MONTH";
-    case StatsPageView.allTime:
-      return "ALL TIME";
-  }
-}
 
 class StatsData {
   final List<(DateTime, double)> progress;

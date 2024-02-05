@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
-import 'package:neo_delta/models/stats_filter.dart';
+import 'package:neo_delta/models/stats.dart';
 import 'package:provider/provider.dart';
 
 // src: https://medium.com/@enrico.ori/getting-to-know-flutter-advanced-use-of-modalbottomsheet-38e5ef55d561

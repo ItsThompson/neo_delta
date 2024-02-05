@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
 
 class LandmarkDeltaButton extends StatelessWidget {
@@ -17,7 +18,7 @@ class LandmarkDeltaButton extends StatelessWidget {
         ),
         child: InkWell(
             onTap: () {
-                // Navigator.pushNamed(context, '/')
+              context.push("/landmark-deltas");
                 },
             child: Container(
                 margin: const EdgeInsets.all(5),
