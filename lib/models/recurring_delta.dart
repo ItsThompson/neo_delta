@@ -11,7 +11,7 @@ class RecurringDelta{
 }
 
 
-String getDeltaIntervalString(DeltaInterval interval) {
+String getDeltaIntervalCurrentString(DeltaInterval interval) {
   switch (interval) {
     case DeltaInterval.day:
       return "TODAY";
@@ -19,5 +19,29 @@ String getDeltaIntervalString(DeltaInterval interval) {
       return "THIS WEEK";
     case DeltaInterval.month:
       return "THIS MONTH";
+  }
+}
+
+
+String getDeltaIntervalAdverbString(DeltaInterval interval) {
+  switch (interval) {
+    case DeltaInterval.day:
+      return "DAILY";
+    case DeltaInterval.week:
+      return "WEEKLY";
+    case DeltaInterval.month:
+      return "MONTHLY";
+  }
+}
+
+
+String getDeltaIntervalPeriodString(DeltaInterval interval) {
+  switch (interval) {
+    case DeltaInterval.day:
+      return "DAY";
+    case DeltaInterval.week:
+      return "WEEK";
+    case DeltaInterval.month:
+      return "MONTH";
   }
 }

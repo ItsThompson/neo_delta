@@ -244,7 +244,7 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                   Text(
                     remainingFrequency == 0
                         ? "ALL DONE!"
-                        : "$remainingFrequency LEFT ${getDeltaIntervalString(recurringDelta.deltaInterval)}",
+                        : "$remainingFrequency LEFT ${getDeltaIntervalCurrentString(recurringDelta.deltaInterval)}",
                     style: const TextStyle(fontSize: 10),
                   )
                 ],
