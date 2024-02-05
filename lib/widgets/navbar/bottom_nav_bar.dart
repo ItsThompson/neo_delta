@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
+import 'package:neo_delta/widgets/navbar/nav_bar_background.dart';
 
 class NavBarItem {
   final String name;
@@ -41,23 +42,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             child: Stack(
               children: <Widget>[
                 // Background
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: padding / 2),
-                  height: actionButtonSize - padding,
-                  decoration: BoxDecoration(
-                      image: const DecorationImage(
-                          image: AssetImage("assets/navbar/navbarbg.png"),
-                          fit: BoxFit.fill),
-                      color: mainTheme.colorScheme.surface,
-                      borderRadius: const BorderRadius.all(Radius.circular(40)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: mainTheme.colorScheme.surface.withOpacity(0.5),
-                          offset: const Offset(5, 10),
-                          blurRadius: 20,
-                        )
-                      ]),
-                ),
+                NavBarBackground(padding: padding, height: actionButtonSize - padding),
                 // Buttons
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
