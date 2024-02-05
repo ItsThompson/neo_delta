@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
-import 'package:neo_delta/pages/stats_page.dart';
+import 'package:neo_delta/models/stats.dart';
 
 class MonthlyProgress extends StatefulWidget {
   final StatsData statsData;

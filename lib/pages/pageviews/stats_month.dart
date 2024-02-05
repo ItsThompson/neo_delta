@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:neo_delta/models/stats.dart';
-import 'package:neo_delta/pages/stats_page.dart';
 import 'package:neo_delta/widgets/stats/progress_monthly.dart';
 import 'package:neo_delta/widgets/stats/stats_graph.dart';
 

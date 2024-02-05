@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
@@ -193,7 +192,7 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
           // Double Tap: Go to profile
           onDoubleTap: () {
             // Show modal: Can increment and progress is true
-            if (!canIncrement()){// && _isComplete == false) {
+            if (!canIncrement()) {
               context.push("/recurring-deltas/${recurringDelta.id}");
             } else {
               doubleTapOptionBottomModal();

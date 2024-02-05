@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -14,7 +15,6 @@ String getPageViewString(StatsPageView pageView) {
       return "ALL TIME";
   }
 }
-
 
 class StatsFilter extends ChangeNotifier {
   List<StatsFilterItem> _filterList = [
@@ -64,4 +64,55 @@ class StatsPageViewIndex extends ChangeNotifier {
     _length = newLength;
     notifyListeners();
   }
+}
+
+class StatsData {
+  final List<(DateTime, double)> progress;
+
+  bool hasNegativeValues() {
+    for (var i = 0; i < progress.length; i++) {
+      if (progress[i].$2 < 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  (double, double) getMinMax() {
+    double maximum = progress[0].$2;
+    double minimum = progress[0].$2;
+    for (var i = 1; i < progress.length; i++) {
+      if (progress[i].$2 > maximum) {
+        maximum = progress[i].$2;
+      }
+      if (progress[i].$2 < minimum) {
+        minimum = progress[i].$2;
+      }
+    }
+
+    if (hasNegativeValues()) {
+      double range = max(maximum.abs(), minimum.abs());
+      return (-range, range);
+    }
+    return (0, maximum);
+  }
+
+  factory StatsData.generateFakeData(int length, int maximum, int minimum) {
+    List<(DateTime, double)> progress = [];
+    Random random = Random();
+    double randomNumber;
+    DateTime dateTime = DateTime.utc(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    for (var i = 0; i < length; i++) {
+      randomNumber = double.parse(
+          (minimum + random.nextDouble() * (maximum - minimum))
+              .toStringAsFixed(2));
+      progress.add((dateTime, randomNumber));
+      dateTime = dateTime.add(const Duration(days: 1));
+    }
+    return StatsData(progress: progress);
+  }
+
+  StatsData({required this.progress});
 }

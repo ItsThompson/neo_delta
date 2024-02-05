@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/stats.dart';
-import 'package:neo_delta/pages/stats_page.dart';
 
 // src: https://github.com/imaNNeo/fl_chart/blob/main/example/lib/presentation/samples/line/line_chart_sample2.dart
 class StatsGraph extends StatefulWidget {
