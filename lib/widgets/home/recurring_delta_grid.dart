@@ -222,14 +222,14 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 border: Border.all(
-                  width: 10,
+                  width: 5,
                   color: _isComplete
                       ? mainTheme.colorScheme.primary
                       : Colors.transparent,
                 ),
                 color: remainingFrequency == 0
                     ? mainTheme.colorScheme.primary
-                    : mainTheme.colorScheme.inversePrimary.withOpacity(0.5),
+                    : mainTheme.colorScheme.surface,
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
               ),
               child: Column(

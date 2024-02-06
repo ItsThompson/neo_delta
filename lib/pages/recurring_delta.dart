@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
 
 //TODO: Backend Calculation
 String getNameFromId(int id) {
@@ -29,16 +30,13 @@ DateTime getStartDateFromId(int id) {
   return DateTime.now();
 }
 
-
 int getLongestStreakFromId(int id) {
   return 5;
 }
 
-
 double getAllTimeDeltaPercentageFromId(int id) {
   return 50;
 }
-
 
 double getThisMonthDeltaPercentageFromId(int id) {
   return 4;
@@ -63,23 +61,10 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
     DateTime startDate = getStartDateFromId(widget.id);
     int longestStreak = getLongestStreakFromId(widget.id);
     double allTimeDeltaPercentage = getAllTimeDeltaPercentageFromId(widget.id);
-    double currentMonthDeltaPercentage = getThisMonthDeltaPercentageFromId(widget.id);
+    double currentMonthDeltaPercentage =
+        getThisMonthDeltaPercentageFromId(widget.id);
     return Scaffold(
-        appBar: AppBar(
-            leading: Container(
-                margin: const EdgeInsets.only(left: 5),
-                child: IconButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                    ))),
-            title: const Text("RECURRING DELTA",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            titleSpacing: 30,
-            automaticallyImplyLeading: false,
-            backgroundColor: mainTheme.colorScheme.background),
+        appBar: const AppBarWithBackButton(title: "RECURRING DELTA"),
         body: Container(
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
           width: double.infinity,
@@ -154,10 +139,9 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     color: mainTheme.colorScheme.surface),
-                child: 
-                Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("LONGEST STREAK $longestStreak",
                         style: const TextStyle(fontSize: 18)),

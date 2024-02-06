@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
 
 
 class NewRecurringPage extends StatefulWidget {
@@ -42,21 +43,7 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
     bool nameIsEmpty = name == "";
 
     return Scaffold(
-      appBar: AppBar(
-          leading: Container(
-              margin: const EdgeInsets.only(left: 5),
-              child: IconButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                  ))),
-          title: const Text("NEW RECURRING DELTA",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-          titleSpacing: 30,
-          automaticallyImplyLeading: false,
-          backgroundColor: mainTheme.colorScheme.background),
+      appBar: const AppBarWithBackButton(title: "NEW RECURRING DELTA"),
       body: Container(
           margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
           child: SafeArea(

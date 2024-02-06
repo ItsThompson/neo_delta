@@ -23,10 +23,6 @@ class LandmarkDeltaButton extends StatelessWidget {
             child: Container(
                 margin: const EdgeInsets.all(5),
                 padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: mainTheme.colorScheme.inversePrimary.withOpacity(0.5),
-                  borderRadius: const BorderRadius.all(Radius.circular(5)),
-                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
