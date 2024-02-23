@@ -10,17 +10,14 @@ Future<Map<int, int>> getMonthsAndNumberOfLandmarks(int year) async {
   dbService.initDatabase();
 
   final List<LandmarkDelta> allLandmarkDeltas =
-      await dbService.getAllLandmarkDeltas();
+      await dbService.getAllLandmarkDeltasWithYear(year);
 
   Map<int, int> outputMap = {};
 
   for (var landmarkDelta in allLandmarkDeltas) {
-    var landmarkYear = landmarkDelta.dateTime.year;
-    var month = landmarkDelta.dateTime.month;
+    var landmarkMonth = landmarkDelta.dateTime.month;
 
-    if (year == landmarkYear) {
-      outputMap.update(month, (value) => ++value, ifAbsent: () => 1);
-    }
+    outputMap.update(landmarkMonth, (value) => ++value, ifAbsent: () => 1);
   }
   int totalNumberOfLandmarks = 0;
   for (var value in outputMap.values) {
