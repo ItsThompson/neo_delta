@@ -6,6 +6,7 @@ import 'package:neo_delta/routes/router_config.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [

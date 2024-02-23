@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neo_delta/database/database.dart';
 import 'package:neo_delta/main_theme.dart';
+import 'package:neo_delta/models/landmark_delta.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class NewLandmarkPage extends StatefulWidget {
   const NewLandmarkPage({super.key});
@@ -130,6 +134,7 @@ class _NewLandmarkPageState extends State<NewLandmarkPage> {
             });
           } else {
             print( "\n task name: $name\n description: $description\n weighting: $weighting"); // TODO: Business logic to write to database.
+            addNewLandmark(name, description, weighting);
             context.pop();
           }
         },
@@ -140,4 +145,14 @@ class _NewLandmarkPageState extends State<NewLandmarkPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         );
   }
+
+  Future <void> addNewLandmark(String name, String description, int weighting) async {
+    var now = DateTime.now();
+    // Note the ID does not matter, it is autoincrementing in SQL and the insert statement does not take in an ID value.
+    var landmarkDelta = LandmarkDelta(id: 0, name: name, dateTime: now, weighting: weighting, description: description);
+    final dbService = DatabaseService();
+    dbService.insertLandmarkData(landmarkDelta);
+
+  }
 }
+
