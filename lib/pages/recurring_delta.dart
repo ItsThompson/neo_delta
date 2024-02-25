@@ -3,7 +3,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:neo_delta/models/stats.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
+import 'package:neo_delta/widgets/stats/progress_monthly.dart';
 
 //TODO: Backend Calculation
 String getNameFromId(int id) {
@@ -66,18 +68,22 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
     return Scaffold(
         appBar: const AppBarWithBackButton(title: "RECURRING DELTA"),
         body: Container(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+          margin: const EdgeInsets.symmetric(vertical: 10),
           width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: const TextStyle(fontSize: 36),
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Text(
+                  name,
+                  style: const TextStyle(fontSize: 36),
+                ),
               ),
               const SizedBox(height: 30),
               IntrinsicHeight(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -129,11 +135,12 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                     )
                   ],
                 ),
-              ),
+              )),
               const SizedBox(height: 30),
               Container(
                 width: double.infinity,
                 height: 150,
+                margin: const EdgeInsets.symmetric(horizontal: 30),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 decoration: BoxDecoration(
@@ -153,7 +160,15 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                         style: const TextStyle(fontSize: 18)),
                   ],
                 ),
-              )
+              ),
+              const SizedBox(height: 30),
+              const Center(
+                child: Text(
+                  "This Month",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              MonthlyProgress(statsData: StatsData.generateFakeData(28, 1, -1))
             ],
           ),
         ));

@@ -84,17 +84,20 @@ class _MyWidgetState extends State<MonthlyProgress> {
     }
 
     String text;
-    double value = widget.statsData.progress[index].$2;
+    double roundedValue =
+        double.parse(widget.statsData.progress[index].$2.toStringAsFixed(1));
 
-    if (value >= 0) {
-      text = "+${value.toStringAsFixed(1)}";
+    if (roundedValue == 0.0) {
+      text = "0.0";
+    } else if (roundedValue > 0) {
+      text = "+$roundedValue";
     } else {
-      text = value.toStringAsFixed(1);
+      text = "$roundedValue";
     }
 
-    if (value < 0) {
+    if (roundedValue < 0) {
       color = mainTheme.colorScheme.tertiary.withOpacity(0.5);
-    } else if (value > 0) {
+    } else if (roundedValue > 0) {
       color = mainTheme.colorScheme.primary.withOpacity(0.5);
     } else {
       color = mainTheme.colorScheme.secondary.withOpacity(0.8);

@@ -43,6 +43,7 @@ class _LandmarkDeltaPageState extends State<LandmarkDeltaPage> {
           padding: const EdgeInsets.all(5),
           itemCount: snapshot.data!.length,
           itemBuilder: (BuildContext context, int index) {
+            List<LandmarkDelta> allLandmarkDeltas = snapshot.data!;
             return Container(
               margin: const EdgeInsets.only(bottom: 15),
               child: Ink(
@@ -54,7 +55,7 @@ class _LandmarkDeltaPageState extends State<LandmarkDeltaPage> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      context.replace("/landmark-delta-full-page/${snapshot.data![index].id}");
+                      context.replace("/landmark-delta-full-page/${allLandmarkDeltas[index].id}");
                     },
                     child: Container(
                         margin: const EdgeInsets.all(5),
@@ -73,13 +74,13 @@ class _LandmarkDeltaPageState extends State<LandmarkDeltaPage> {
                               ),
                             ),
                             Text(
-                              "${snapshot.data![index].dateTime.year}-${snapshot.data![index].dateTime.month.toString().padLeft(2, "0")}-${snapshot.data![index].dateTime.day.toString().padLeft(2, "0")}",
+                              "${allLandmarkDeltas[index].dateTime.year}-${allLandmarkDeltas[index].dateTime.month.toString().padLeft(2, "0")}-${allLandmarkDeltas[index].dateTime.day.toString().padLeft(2, "0")}",
                               style: const TextStyle(fontSize: 16),
                             ),
                             SizedBox(
                               height: 80,
                               child: Text(
-                                snapshot.data![index].description,
+                                allLandmarkDeltas[index].description,
                                 maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
                               ),
