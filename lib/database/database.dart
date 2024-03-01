@@ -14,13 +14,13 @@ class DatabaseService {
   }
 
   Future<Database> initDatabase() async {
-    // print("Database Stored in: ${join(await getDatabasesPath(), 'neo_delta.db')}");
+    // print( "Database Stored in: ${joinawait getDatabasesPath(), 'neo_delta.db')}");
     return await openDatabase(join(await getDatabasesPath(), 'neo_delta.db'),
         onCreate: _onCreate, version: 1);
   }
 
   void _onCreate(Database db, int version) async {
-    await db.execute("""
+    db.execute('''
           CREATE TABLE IF NOT EXISTS "landmark_delta" (
             "id" INTEGER NOT NULL UNIQUE,
             "name" VARCHAR(50) NOT NULL,
@@ -29,7 +29,26 @@ class DatabaseService {
             "weighting" INTEGER NOT NULL,
             PRIMARY KEY("id" AUTOINCREMENT)
           )
-          """);
+          ''');
+    db.execute('''
+          CREATE TABLE IF NOT EXISTS "recurring_delta" (
+            "id" INTEGER NOT NULL UNIQUE,
+            "name" VARCHAR(50) NOT NULL, 
+            "weight" INTEGER NOT NULL,
+            "start_date" DATETIME NOT NULL,
+            "icon_src" VARCHAR(200) NOT NULL,
+            PRIMARY KEY("id" AUTOINCREMENT)
+          )
+          ''');
+    db.execute('''
+          CREATE TABLE IF NOT EXISTS "delta_progress" (
+            "id" INTEGER NOT NULL UNIQUE,
+            "delta_id" INTEGER NOT NULL,
+            "completed_at" DATETIME NOT NULL,
+            PRIMARY KEY("id" AUTOINCREMENT),
+            FOREIGN KEY ("delta_id") REFERENCES "recurring_delta"("id")
+          )
+          ''');
   }
 
   Future<List<LandmarkDelta>> getAllLandmarkDeltas() async {
@@ -52,9 +71,11 @@ class DatabaseService {
             description: description),
     ];
   }
+
   Future<LandmarkDelta> getLandmarkDeltaById(int id) async {
     final db = await _databaseService.db;
-    var data = await db.query("landmark_delta", where: "id = ?", whereArgs: [id]);
+    var data =
+        await db.query("landmark_delta", where: "id = ?", whereArgs: [id]);
     var out = [
       for (final {
             'id': id as int,
@@ -73,12 +94,11 @@ class DatabaseService {
     return out[0];
   }
 
-
   Future<List<LandmarkDelta>> getAllLandmarkDeltasWithYear(int year) async {
     List<LandmarkDelta> allLandmarkDeltas = await getAllLandmarkDeltas();
     final List<LandmarkDelta> output = [];
 
-    for(var landmarkDelta in allLandmarkDeltas){
+    for (var landmarkDelta in allLandmarkDeltas) {
       var landmarkYear = landmarkDelta.dateTime.year;
       if (landmarkYear == year) {
         output.add(landmarkDelta);
@@ -87,11 +107,12 @@ class DatabaseService {
     return output;
   }
 
-  Future<List<LandmarkDelta>> getAllLandmarkDeltasWithYearAndMonth(int year, int month) async {
+  Future<List<LandmarkDelta>> getAllLandmarkDeltasWithYearAndMonth(
+      int year, int month) async {
     List<LandmarkDelta> allLandmarkDeltas = await getAllLandmarkDeltas();
     final List<LandmarkDelta> output = [];
 
-    for(var landmarkDelta in allLandmarkDeltas){
+    for (var landmarkDelta in allLandmarkDeltas) {
       var landmarkYear = landmarkDelta.dateTime.year;
       var landmarkMonth = landmarkDelta.dateTime.month;
       if (landmarkYear == year && landmarkMonth == month) {

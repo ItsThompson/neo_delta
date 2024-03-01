@@ -148,7 +148,7 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
         },
         child: Text("SAVE NEW DELTA",
             style: TextStyle(
-                fontSize: 20, color: mainTheme.colorScheme.inversePrimary)),
+                fontSize: 20, color: mainTheme.colorScheme.inverseSurface)),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

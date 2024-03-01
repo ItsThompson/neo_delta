@@ -55,7 +55,8 @@ class _LandmarkDeltaPageState extends State<LandmarkDeltaPage> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      context.replace("/landmark-delta-full-page/${allLandmarkDeltas[index].id}");
+                      String route = "/landmark-delta-full-page/${allLandmarkDeltas[index].id}";
+                      context.replace("$route?year=${widget.year}&month=${widget.month}");
                     },
                     child: Container(
                         margin: const EdgeInsets.all(5),

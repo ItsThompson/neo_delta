@@ -91,7 +91,8 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
     optimalVolume: 0,
     completedToday: false,
   );
-  int remainingFrequency = 0; // Negative remainingFrequency means additional completions
+  int remainingFrequency =
+      0; // Negative remainingFrequency means additional completions
 
   @override
   void initState() {
@@ -151,7 +152,7 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       color:
-                          mainTheme.colorScheme.inversePrimary.withOpacity(0.5),
+                          mainTheme.colorScheme.inverseSurface.withOpacity(0.5),
                     ),
                   ),
                 ),
@@ -169,7 +170,7 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                     child: Text(
                       "UNDO COMPLETE",
                       style: TextStyle(
-                          color: mainTheme.colorScheme.inversePrimary,
+                          color: mainTheme.colorScheme.inverseSurface,
                           fontSize: 20),
                     )),
                 ElevatedButton(
@@ -183,7 +184,7 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                     child: Text(
                       "GO TO DELTA PROFILE",
                       style: TextStyle(
-                          color: mainTheme.colorScheme.inversePrimary,
+                          color: mainTheme.colorScheme.inverseSurface,
                           fontSize: 20),
                     )),
               ],
@@ -233,12 +234,16 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                 border: Border.all(
                   width: 5,
                   color: _isComplete
-                      ? mainTheme.colorScheme.primary
+                      ? remainingFrequency >= 0
+                        ? mainTheme.colorScheme.primary
+                        : mainTheme.colorScheme.inversePrimary
                       : Colors.transparent,
                 ),
-                color: remainingFrequency <= 0
+                color: remainingFrequency == 0
                     ? mainTheme.colorScheme.primary
-                    : mainTheme.colorScheme.surface,
+                    : remainingFrequency >= 0
+                        ? mainTheme.colorScheme.surface
+                        : mainTheme.colorScheme.inversePrimary,
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
               ),
               child: Column(
@@ -251,12 +256,11 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                     child: Image.asset(recurringDelta.iconSrc),
                   ),
                   Text(
-
                     remainingFrequency == 0
                         ? "ALL DONE!"
                         : remainingFrequency >= 0
-                          ? "$remainingFrequency LEFT ${getDeltaIntervalCurrentString(recurringDelta.deltaInterval)}"
-                          :"ALL DONE! (+${-remainingFrequency})" ,
+                            ? "$remainingFrequency LEFT ${getDeltaIntervalCurrentString(recurringDelta.deltaInterval)}"
+                            : "ALL DONE! (+${-remainingFrequency})",
                     style: const TextStyle(fontSize: 10),
                   )
                 ],

@@ -97,7 +97,7 @@ class _NewLandmarkPageState extends State<NewLandmarkPage> {
         },
         child: Text("SUBMIT DELTA",
             style: TextStyle(
-                fontSize: 20, color: mainTheme.colorScheme.inversePrimary)),
+                fontSize: 20, color: mainTheme.colorScheme.inverseSurface)),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

@@ -150,7 +150,7 @@ Future<void> newDeltaButtonBottomModal(BuildContext context) {
                 height: 4,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
-                  color: mainTheme.colorScheme.inversePrimary.withOpacity(0.5),
+                  color: mainTheme.colorScheme.inverseSurface.withOpacity(0.5),
                 ),
               ),
             ),
@@ -171,7 +171,7 @@ Future<void> newDeltaButtonBottomModal(BuildContext context) {
                 label: Text(
                   "New Recurring Delta",
                   style: TextStyle(
-                      color: mainTheme.colorScheme.inversePrimary,
+                      color: mainTheme.colorScheme.inverseSurface,
                       fontSize: 20),
                 )),
             ElevatedButton.icon(
@@ -186,7 +186,7 @@ Future<void> newDeltaButtonBottomModal(BuildContext context) {
                 label: Text(
                   "New Landmark Delta",
                   style: TextStyle(
-                      color: mainTheme.colorScheme.inversePrimary,
+                      color: mainTheme.colorScheme.inverseSurface,
                       fontSize: 20),
                 )),
           ],

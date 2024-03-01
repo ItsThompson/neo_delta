@@ -69,7 +69,7 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                                         borderRadius:
                                             BorderRadius.circular(100),
                                         color: mainTheme
-                                            .colorScheme.inversePrimary
+                                            .colorScheme.inverseSurface
                                             .withOpacity(0.5),
                                       ),
                                     ),
@@ -87,7 +87,7 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(100),
                                       color:
-                                          mainTheme.colorScheme.inversePrimary,
+                                          mainTheme.colorScheme.inverseSurface,
                                     ),
                                   ),
                                   Expanded(
@@ -143,7 +143,7 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 color: mainTheme.colorScheme
-                                                    .inversePrimary))),
+                                                    .inverseSurface))),
                                   ),
 
                                   Container(
@@ -155,7 +155,7 @@ Future<void> statsFilterBottomModal(BuildContext context) async {
                                                       vertical: 10,
                                                       horizontal: 80),
                                               backgroundColor: mainTheme
-                                                  .colorScheme.inversePrimary),
+                                                  .colorScheme.inverseSurface),
                                           onPressed: () {
                                             setState(() {
                                               setIncluded(0, false);

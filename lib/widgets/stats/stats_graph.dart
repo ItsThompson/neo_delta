@@ -60,7 +60,7 @@ class _StatsGraphState extends State<StatsGraph> {
           ? ExtraLinesData(horizontalLines: [
               HorizontalLine(
                   y: 0,
-                  color: mainTheme.colorScheme.inversePrimary,
+                  color: mainTheme.colorScheme.inverseSurface,
                   strokeWidth: 2)
             ])
           : const ExtraLinesData(),
@@ -68,11 +68,11 @@ class _StatsGraphState extends State<StatsGraph> {
           show: true,
           border: Border(
               left: BorderSide(
-                  color: mainTheme.colorScheme.inversePrimary, width: 2),
+                  color: mainTheme.colorScheme.inverseSurface, width: 2),
               bottom: hasNegativeY
                   ? BorderSide.none
                   : BorderSide(
-                      color: mainTheme.colorScheme.inversePrimary, width: 2))),
+                      color: mainTheme.colorScheme.inverseSurface, width: 2))),
       minX: 0,
       maxX: widget.maxX.toDouble(),
       minY: range.$1,
@@ -84,7 +84,7 @@ class _StatsGraphState extends State<StatsGraph> {
               (index) => FlSpot(
                   index.toDouble(), widget.statsData.progress[index].$2)),
           isCurved: true,
-          color: mainTheme.colorScheme.inversePrimary,
+          color: mainTheme.colorScheme.inverseSurface,
           barWidth: 1.5,
           isStrokeCapRound: true,
           dotData: const FlDotData(

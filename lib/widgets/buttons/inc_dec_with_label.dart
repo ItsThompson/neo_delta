@@ -58,7 +58,7 @@ class _IncrementDecrementButtonState extends State<IncrementDecrementButton> {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: mainTheme.colorScheme.inversePrimary),
+                      color: mainTheme.colorScheme.inverseSurface),
                 )),
             TextButton(
                 onPressed: () {
@@ -72,7 +72,7 @@ class _IncrementDecrementButtonState extends State<IncrementDecrementButton> {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: mainTheme.colorScheme.inversePrimary),
+                      color: mainTheme.colorScheme.inverseSurface),
                 )),
           ],
         )

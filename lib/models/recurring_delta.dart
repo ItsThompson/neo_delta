@@ -1,5 +1,6 @@
 enum DeltaInterval { day, week, month }
 
+// TODO: smart icon selection (tag system?)
 class RecurringDelta {
   final int id;
   final String name;

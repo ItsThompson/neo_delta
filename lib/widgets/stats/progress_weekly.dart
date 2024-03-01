@@ -37,7 +37,7 @@ class _WeeklyProgressState extends State<WeeklyProgress> {
               extraLinesData: ExtraLinesData(horizontalLines: [
                 HorizontalLine(
                     y: 0,
-                    color: mainTheme.colorScheme.inversePrimary,
+                    color: mainTheme.colorScheme.inverseSurface,
                     strokeWidth: 3)
               ]),
             ),
@@ -65,7 +65,7 @@ class _WeeklyProgressState extends State<WeeklyProgress> {
                       color: rod.toY > 0
                           ? mainTheme.colorScheme.primary
                           : (rod.toY == 0
-                              ? mainTheme.colorScheme.inversePrimary
+                              ? mainTheme.colorScheme.inverseSurface
                               : mainTheme.colorScheme.tertiary),
                       fontWeight: FontWeight.bold,
                     ),
@@ -76,7 +76,7 @@ class _WeeklyProgressState extends State<WeeklyProgress> {
 
   Widget getTitles(double value, TitleMeta meta) {
     final style = TextStyle(
-      color: mainTheme.colorScheme.inversePrimary,
+      color: mainTheme.colorScheme.inverseSurface,
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
@@ -130,7 +130,7 @@ class _WeeklyProgressState extends State<WeeklyProgress> {
             color: value > 0
                 ? mainTheme.colorScheme.primary.withOpacity(0.8)
                 : (value == 0
-                    ? mainTheme.colorScheme.inversePrimary.withOpacity(0.8)
+                    ? mainTheme.colorScheme.inverseSurface.withOpacity(0.8)
                     : mainTheme.colorScheme.tertiary.withOpacity(0.8)),
           )
         ],

@@ -51,7 +51,7 @@ class _StatsPageState extends State<StatsPage> {
                 margin: const EdgeInsets.only(right: 5),
                 child: Ink(
                   decoration: ShapeDecoration(
-                      color: mainTheme.colorScheme.inversePrimary,
+                      color: mainTheme.colorScheme.inverseSurface,
                       shape: const CircleBorder()),
                   child: IconButton(
                     onPressed: () {

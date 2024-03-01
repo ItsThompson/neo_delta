@@ -35,7 +35,6 @@ final GoRouter router = GoRouter(
                   final id = int.parse(state.pathParameters['id']!);
                   return RecurringDeltaPage(id: id);
                 },
-                // const RecurringDeltaSummary(id: state.pathParameters['id']),
               )
             ]),
         GoRoute(
@@ -70,13 +69,15 @@ final GoRouter router = GoRouter(
                 final month = int.parse(state.pathParameters['month']!);
                 return LandmarkDeltaPage(year: year, month: month);
               }),
-          GoRoute(
-              path: "/landmark-delta-full-page/:id",
-              builder: (context, state) {
-                final id = int.parse(state.pathParameters['id']!);
-                return LandmarkDeltaFullPage(id: id);
-              }),
         ]),
+    GoRoute(
+        path: "/landmark-delta-full-page/:id",
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          final year = int.parse(state.uri.queryParameters['year']!);
+          final month = int.parse(state.uri.queryParameters['month']!);
+          return LandmarkDeltaFullPage(id: id, year: year, month: month);
+        }),
     GoRoute(
       path: "/new-recurring-delta",
       builder: (context, state) => const NewRecurringPage(),

@@ -68,7 +68,7 @@ class _AllTimeRowState extends State<AllTimeRow> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: progress == 0
-                  ? mainTheme.colorScheme.inversePrimary.withOpacity(0.5)
+                  ? mainTheme.colorScheme.inverseSurface.withOpacity(0.5)
                   : (progress < 0
                       ? mainTheme.colorScheme.tertiary.withOpacity(0.5)
                       : mainTheme.colorScheme.primary.withOpacity(0.5)),

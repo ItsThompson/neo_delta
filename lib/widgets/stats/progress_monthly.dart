@@ -77,7 +77,7 @@ class _MyWidgetState extends State<MonthlyProgress> {
               child: child));
     }
 
-    Color color = mainTheme.colorScheme.inversePrimary.withOpacity(0.5);
+    Color color = mainTheme.colorScheme.inverseSurface.withOpacity(0.5);
 
     if (index >= widget.statsData.progress.length) {
       return internalBoxGenerator(color, null);

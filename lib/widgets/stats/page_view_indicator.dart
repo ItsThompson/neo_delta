@@ -61,7 +61,7 @@ class _IndicatorState extends State<Indicator> {
               borderRadius: BorderRadius.circular(100),
               border: Border.all(width: 2, color: Colors.white),
               color: isSelected
-                  ? mainTheme.colorScheme.inversePrimary
+                  ? mainTheme.colorScheme.inverseSurface
                   : Colors.transparent,
             )));
   }

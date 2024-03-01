@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
 import 'package:neo_delta/models/stats.dart';
@@ -141,7 +140,7 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                                   style: TextStyle(
                                       fontSize: 10,
                                       color: mainTheme
-                                          .colorScheme.inversePrimary
+                                          .colorScheme.inverseSurface
                                           .withOpacity(0.5))),
                             )
                           ],
