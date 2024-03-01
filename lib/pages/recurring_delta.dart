@@ -20,8 +20,15 @@ DeltaInterval getIntervalFromId(int id) {
   return DeltaInterval.day;
 }
 
-int getFrequencyFromId(int id) {
+int getMinimumVolumeFromId(int id) {
   return 1;
+}
+
+int getEffectiveVolumeFromId(int id) {
+  return 2;
+}
+int getOptimalVolumeFromId(int id) {
+  return 4;
 }
 
 int getWeightingFromId(int id) {
@@ -58,7 +65,9 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
     String name = getNameFromId(widget.id);
     double successPercentage = getRecurringDeltaSuccessRateFromId(widget.id);
     DeltaInterval interval = getIntervalFromId(widget.id);
-    int frequency = getFrequencyFromId(widget.id);
+    int minimumVolume = getMinimumVolumeFromId(widget.id);
+    int effectiveVolume = getEffectiveVolumeFromId(widget.id);
+    int optimalVolume = getOptimalVolumeFromId(widget.id);
     int weighting = getWeightingFromId(widget.id);
     DateTime startDate = getStartDateFromId(widget.id);
     int longestStreak = getLongestStreakFromId(widget.id);
@@ -101,7 +110,7 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: 100,
+                              height: 140,
                               child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
@@ -113,7 +122,13 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                                       "${getDeltaIntervalAdverbString(interval)} TASK",
                                       style: const TextStyle(fontSize: 12)),
                                   Text(
-                                      "$frequency ${frequency == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
+                                      "MV: $minimumVolume ${minimumVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
+                                      style: const TextStyle(fontSize: 12)),
+                                  Text(
+                                      "EV: $effectiveVolume ${effectiveVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
+                                      style: const TextStyle(fontSize: 12)),
+                                  Text(
+                                      "OV: $optimalVolume ${optimalVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
                                       style: const TextStyle(fontSize: 12)),
                                   Text("WEIGHTING: $weighting/10",
                                       style: const TextStyle(fontSize: 12)),

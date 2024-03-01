@@ -1,15 +1,26 @@
 enum DeltaInterval { day, week, month }
 
-class RecurringDelta{
+class RecurringDelta {
   final int id;
   final String name;
   final String iconSrc;
   final DeltaInterval deltaInterval;
-  final int remainingFrequency;
+  final int remainingFrequency; // Remaining Frequency until Optimal Volume
+  final int minimumVolume;
+  final int effectiveVolume;
+  final int optimalVolume;
   final bool completedToday;
-  RecurringDelta({required this.id, required this.name, required this.iconSrc, required this.deltaInterval, required this.remainingFrequency, required this.completedToday});
+  RecurringDelta(
+      {required this.id,
+      required this.name,
+      required this.iconSrc,
+      required this.deltaInterval,
+      required this.remainingFrequency,
+      required this.minimumVolume,
+      required this.effectiveVolume,
+      required this.optimalVolume,
+      required this.completedToday});
 }
-
 
 String getDeltaIntervalCurrentString(DeltaInterval interval) {
   switch (interval) {
@@ -22,7 +33,6 @@ String getDeltaIntervalCurrentString(DeltaInterval interval) {
   }
 }
 
-
 String getDeltaIntervalAdverbString(DeltaInterval interval) {
   switch (interval) {
     case DeltaInterval.day:
@@ -33,7 +43,6 @@ String getDeltaIntervalAdverbString(DeltaInterval interval) {
       return "MONTHLY";
   }
 }
-
 
 String getDeltaIntervalPeriodString(DeltaInterval interval) {
   switch (interval) {

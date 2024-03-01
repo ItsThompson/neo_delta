@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
-
+import 'package:neo_delta/widgets/buttons/inc_dec_with_label.dart';
 
 class NewRecurringPage extends StatefulWidget {
   const NewRecurringPage({super.key});
@@ -16,26 +16,28 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
   double paddingForColumnItems = 25;
   String name = "";
   DeltaInterval interval = DeltaInterval.day;
-  int _frequency = 1;
-  int _weighting = 10;
-  int maxWeighting = 10;
-  int maxFrequency = 99;
+
+  int minVol = 1, effectiveVol = 1, optimalVol = 1, weighting = 1;
+
+  int maxMinVol = 99, maxEffectiveVol = 99, maxOptimalVol = 99, maxWeighting = 10;
+
+
   bool showText = false;
 
-  int get frequency => _frequency;
-
-  set frequency(int newFrequency) {
-    if (newFrequency <= maxFrequency && newFrequency > 0) {
-      _frequency = newFrequency;
-    }
+  minVolCallback(value) {
+    minVol = value;
   }
 
-  int get weighting => _weighting;
+  effectiveVolCallback(value) {
+    minVol = value;
+  }
 
-  set weighting(int newWeighting) {
-    if (newWeighting <= maxWeighting && newWeighting > 0) {
-      _weighting = newWeighting;
-    }
+  optimalVolCallback(value) {
+    minVol = value;
+  }
+
+  weightingCallback(value) {
+    weighting = value;
   }
 
   @override
@@ -103,92 +105,30 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
                           multiSelectionEnabled: false,
                         ),
                       )),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: paddingForColumnItems),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("FREQUENCY: $frequency PER DAY",
-                            style: const TextStyle(fontSize: 18)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    frequency += 1;
-                                  });
-                                },
-                                child: Text(
-                                  "+",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color:
-                                          mainTheme.colorScheme.inversePrimary),
-                                )),
-                            TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    frequency -= 1;
-                                  });
-                                },
-                                child: Text(
-                                  "-",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color:
-                                          mainTheme.colorScheme.inversePrimary),
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: paddingForColumnItems),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("WEIGHTING: $weighting / $maxWeighting",
-                            style: const TextStyle(fontSize: 18)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    weighting += 1;
-                                  });
-                                },
-                                child: Text(
-                                  "+",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color:
-                                          mainTheme.colorScheme.inversePrimary),
-                                )),
-                            TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    weighting -= 1;
-                                  });
-                                },
-                                child: Text(
-                                  "-",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color:
-                                          mainTheme.colorScheme.inversePrimary),
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
+                  IncrementDecrementButton(
+                      value: minVol,
+                      minValue: 0,
+                      maxValue: maxMinVol,
+                      labelFormat: "MINIMUM VOLUME: {}",
+                      callBack: minVolCallback),
+                  IncrementDecrementButton(
+                      value: effectiveVol,
+                      minValue: 0,
+                      maxValue: maxEffectiveVol,
+                      labelFormat: "EFFECTIVE VOLUME: {}",
+                      callBack: effectiveVolCallback),
+                  IncrementDecrementButton(
+                      value: optimalVol,
+                      minValue: 0,
+                      maxValue: maxOptimalVol,
+                      labelFormat: "OPTIMAL VOLUME: {}",
+                      callBack: optimalVolCallback),
+                  IncrementDecrementButton(
+                      value: weighting,
+                      minValue: 0,
+                      maxValue: maxWeighting,
+                      labelFormat: "WEIGHTING: {} / $maxWeighting",
+                      callBack: weightingCallback)
                 ]),
           )),
       floatingActionButton: TextButton(
@@ -202,7 +142,7 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
             });
           } else {
             print(
-                "\n task name: $name\n interval: $interval\n frequency: $frequency\n weighting: $weighting"); // TODO: Business logic to write to database.
+                "\n task name: $name\n interval: $interval\n minimumVolume: $minVol\n effectiveVolume: $effectiveVol\n optimalVolume: $optimalVol\n weighting: $weighting"); // TODO: Business logic to write to database.
             context.pop();
           }
         },

@@ -11,6 +11,9 @@ List<RecurringDelta> recurringDeltas = [
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.week,
     remainingFrequency: 6,
+    minimumVolume: 6,
+    effectiveVolume: 5,
+    optimalVolume: 20,
     completedToday: false,
   ),
   RecurringDelta(
@@ -19,6 +22,9 @@ List<RecurringDelta> recurringDeltas = [
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.month,
     remainingFrequency: 20,
+    minimumVolume: 6,
+    effectiveVolume: 5,
+    optimalVolume: 20,
     completedToday: false,
   ),
   RecurringDelta(
@@ -27,6 +33,9 @@ List<RecurringDelta> recurringDeltas = [
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.week,
     remainingFrequency: 3,
+    minimumVolume: 6,
+    effectiveVolume: 5,
+    optimalVolume: 20,
     completedToday: false,
   ),
   RecurringDelta(
@@ -35,6 +44,9 @@ List<RecurringDelta> recurringDeltas = [
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.day,
     remainingFrequency: 1,
+    minimumVolume: 6,
+    effectiveVolume: 5,
+    optimalVolume: 20,
     completedToday: false,
   )
 ];
@@ -74,6 +86,9 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.week,
     remainingFrequency: 0,
+    minimumVolume: 0,
+    effectiveVolume: 0,
+    optimalVolume: 0,
     completedToday: false,
   );
   int remainingFrequency = 0; // Negative remainingFrequency means additional completions
