@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neo_delta/database/database.dart';
+import 'package:neo_delta/database/database_landmark_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/landmark_delta.dart';
 import 'package:neo_delta/models/months.dart';
 
 Future<Map<int, int>> getMonthsAndNumberOfLandmarks(int year) async {
-  final dbService = DatabaseService();
-  dbService.initDatabase();
+  final dbService = DatabaseLandmarkDeltaService();
 
   final List<LandmarkDelta> allLandmarkDeltas =
       await dbService.getAllLandmarkDeltasWithYear(year);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neo_delta/database/database.dart';
+import 'package:neo_delta/database/database_landmark_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/landmark_delta.dart';
 
@@ -18,8 +18,8 @@ class _LandmarkDeltaPageState extends State<LandmarkDeltaPage> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<LandmarkDelta>>(
         future: widget.month == 0
-            ? DatabaseService().getAllLandmarkDeltasWithYear(widget.year)
-            : DatabaseService().getAllLandmarkDeltasWithYearAndMonth(
+            ? DatabaseLandmarkDeltaService().getAllLandmarkDeltasWithYear(widget.year)
+            : DatabaseLandmarkDeltaService().getAllLandmarkDeltasWithYearAndMonth(
                 widget.year, widget.month),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

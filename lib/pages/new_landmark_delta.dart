@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neo_delta/database/database.dart';
+import 'package:neo_delta/database/database_landmark_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/landmark_delta.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
@@ -113,7 +114,7 @@ class _NewLandmarkPageState extends State<NewLandmarkPage> {
         dateTime: now,
         weighting: weighting,
         description: description);
-    final dbService = DatabaseService();
+    final dbService = DatabaseLandmarkDeltaService();
     dbService.insertLandmarkData(landmarkDelta);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:neo_delta/database/database.dart';
+import 'package:neo_delta/database/database_landmark_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/landmark_delta.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
@@ -22,7 +22,7 @@ class _LandmarkDeltaFullPageState extends State<LandmarkDeltaFullPage> {
         extendBody: true,
         appBar: AppBarWithBackButton(title: "LANDMARK DELTA", route: '/landmark-deltas/${widget.year}/${widget.month}',),
         body: FutureBuilder(
-            future: DatabaseService().getLandmarkDeltaById(widget.id),
+            future: DatabaseLandmarkDeltaService().getLandmarkDeltaById(widget.id),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
