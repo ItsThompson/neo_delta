@@ -6,16 +6,16 @@ import 'package:neo_delta/models/stats.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
 import 'package:neo_delta/widgets/stats/progress_monthly.dart';
 
-//TODO: Backend Calculation
-String getNameFromId(int id) {
+String getRecurringDeltaNameById(int id) {
   return "GYM";
 }
 
+// TODO: CALCULATIONS
 double getRecurringDeltaSuccessRateFromId(int id) {
   return 50;
 }
 
-DeltaInterval getIntervalFromId(int id) {
+DeltaInterval getRecurringDeltaIntervalById(int id) {
   return DeltaInterval.day;
 }
 
@@ -26,6 +26,7 @@ int getMinimumVolumeFromId(int id) {
 int getEffectiveVolumeFromId(int id) {
   return 2;
 }
+
 int getOptimalVolumeFromId(int id) {
   return 4;
 }
@@ -38,14 +39,17 @@ DateTime getStartDateFromId(int id) {
   return DateTime.now();
 }
 
+// TODO: CALCULATIONS
 int getLongestStreakFromId(int id) {
   return 5;
 }
 
+// TODO: CALCULATIONS
 double getAllTimeDeltaPercentageFromId(int id) {
   return 50;
 }
 
+// TODO: CALCULATIONS
 double getThisMonthDeltaPercentageFromId(int id) {
   return 4;
 }
@@ -61,9 +65,9 @@ class RecurringDeltaPage extends StatefulWidget {
 class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
   @override
   Widget build(BuildContext context) {
-    String name = getNameFromId(widget.id);
+    String name = getRecurringDeltaNameById(widget.id);
     double successPercentage = getRecurringDeltaSuccessRateFromId(widget.id);
-    DeltaInterval interval = getIntervalFromId(widget.id);
+    DeltaInterval interval = getRecurringDeltaIntervalById(widget.id);
     int minimumVolume = getMinimumVolumeFromId(widget.id);
     int effectiveVolume = getEffectiveVolumeFromId(widget.id);
     int optimalVolume = getOptimalVolumeFromId(widget.id);

@@ -12,7 +12,7 @@ class DatabaseService {
   }
 
   Future<Database> initDatabase() async {
-    // print( "Database Stored in: ${joinawait getDatabasesPath(), 'neo_delta.db')}");
+    print( "Database Stored in: ${join(await getDatabasesPath(), 'neo_delta.db')}");
     return await openDatabase(join(await getDatabasesPath(), 'neo_delta.db'),
         onCreate: _onCreate, version: 1);
   }
@@ -32,9 +32,13 @@ class DatabaseService {
           CREATE TABLE IF NOT EXISTS "recurring_delta" (
             "id" INTEGER NOT NULL UNIQUE,
             "name" VARCHAR(50) NOT NULL, 
-            "weight" INTEGER NOT NULL,
-            "start_date" DATETIME NOT NULL,
             "icon_src" VARCHAR(200) NOT NULL,
+            "interval" VARCHAR(5) NOT NULL,
+            "weighting" INTEGER NOT NULL,
+            "minimum_volume" INTEGER NOT NULL,
+            "effective_volume" INTEGER NOT NULL,
+            "optimal_volume" INTEGER NOT NULL,
+            "start_date" DATETIME NOT NULL,
             PRIMARY KEY("id" AUTOINCREMENT)
           )
           ''');
