@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neo_delta/database/database_recurring_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
 
@@ -10,10 +11,12 @@ List<RecurringDelta> recurringDeltas = [
     name: "GYM",
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.week,
+    weighting: 3,
     remainingFrequency: 6,
     minimumVolume: 6,
     effectiveVolume: 5,
     optimalVolume: 20,
+    startDate: DateTime(2024),
     completedToday: false,
   ),
   RecurringDelta(
@@ -21,10 +24,12 @@ List<RecurringDelta> recurringDeltas = [
     name: "PIANO",
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.month,
+    weighting: 3,
     remainingFrequency: 20,
     minimumVolume: 6,
     effectiveVolume: 5,
     optimalVolume: 20,
+    startDate: DateTime(2024),
     completedToday: false,
   ),
   RecurringDelta(
@@ -32,10 +37,12 @@ List<RecurringDelta> recurringDeltas = [
     name: "RUN",
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.week,
+    weighting: 3,
     remainingFrequency: 3,
     minimumVolume: 6,
     effectiveVolume: 5,
     optimalVolume: 20,
+    startDate: DateTime(2024),
     completedToday: false,
   ),
   RecurringDelta(
@@ -43,10 +50,12 @@ List<RecurringDelta> recurringDeltas = [
     name: "READ",
     iconSrc: "assets/landmark.png",
     deltaInterval: DeltaInterval.day,
+    weighting: 3,
     remainingFrequency: 1,
     minimumVolume: 6,
     effectiveVolume: 5,
     optimalVolume: 20,
+    startDate: DateTime(2024),
     completedToday: false,
   )
 ];
@@ -80,41 +89,32 @@ class RecurringDeltaButton extends StatefulWidget {
 class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
   double _margin = 5;
   bool _isComplete = false;
-  RecurringDelta recurringDelta = RecurringDelta(
-    id: 0,
-    name: "DELTA NAME",
-    iconSrc: "assets/landmark.png",
-    deltaInterval: DeltaInterval.week,
-    remainingFrequency: 0,
-    minimumVolume: 0,
-    effectiveVolume: 0,
-    optimalVolume: 0,
-    completedToday: false,
-  );
-  int remainingFrequency =
-      0; // Negative remainingFrequency means additional completions
+  // Negative remainingFrequency means additional completions
+  int remainingFrequency = 0;
 
   @override
   void initState() {
     super.initState();
-    recurringDelta = widget.initRecurringDelta;
-    remainingFrequency = recurringDelta.remainingFrequency;
-    _isComplete = recurringDelta.completedToday;
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Business logic to update database
+    RecurringDelta recurringDelta = widget.initRecurringDelta;
+    remainingFrequency = recurringDelta.remainingFrequency;
+    _isComplete = recurringDelta.completedToday;
+
     bool canIncrement() {
       return remainingFrequency + 1 <=
           widget.initRecurringDelta.remainingFrequency;
     }
 
+    // TODO: Business logic to update database
     void incrementRemaining() {
       if (canIncrement()) {
         setState(() {
           _isComplete = false;
           remainingFrequency += 1;
+          DatabaseRecurringDeltaService().insertNewCompletion(recurringDelta.id);
         });
       }
     }
@@ -123,6 +123,7 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
       setState(() {
         _isComplete = true;
         remainingFrequency -= 1;
+          DatabaseRecurringDeltaService().deleteMostRecentCompletion(recurringDelta.id);
       });
     }
 
@@ -235,8 +236,8 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                   width: 5,
                   color: _isComplete
                       ? remainingFrequency >= 0
-                        ? mainTheme.colorScheme.primary
-                        : mainTheme.colorScheme.inversePrimary
+                          ? mainTheme.colorScheme.primary
+                          : mainTheme.colorScheme.inversePrimary
                       : Colors.transparent,
                 ),
                 color: remainingFrequency == 0

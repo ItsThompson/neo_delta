@@ -1,41 +1,42 @@
 import 'package:neo_delta/database/database.dart';
+import 'package:neo_delta/models/delta_progress.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
 
 class DatabaseRecurringDeltaService {
   static final DatabaseService _databaseService = DatabaseService();
 
-  Future<RecurringDelta> getRecurringDeltaById(int id) async {
-    final db = await _databaseService.db;
-    var data =
-        await db.query("recurring_delta", where: "id = ?", whereArgs: [id]);
-    var out = [
-      for (final {
-            'id': id as int,
-            'name': name as String,
-            'icon_src': iconSrc as String,
-            'interval': deltaInterval as String,
-            'weighting': weighting as int,
-            'minimum_volume': minimumVolume as int,
-            'effective_volume': effectiveVolume as int,
-            'optimal_volume': optimalVolume as int,
-            'start_date': startDate as String,
-          } in data)
-        RecurringDelta(
-          id: id,
-          name: name,
-          iconSrc: iconSrc,
-          deltaInterval: parseStringToDeltaInterval(deltaInterval),
-          weighting: weighting,
-          remainingFrequency: calculateRemainingFrequencyForRecurringDelta(id),
-          minimumVolume: minimumVolume,
-          effectiveVolume: effectiveVolume,
-          optimalVolume: optimalVolume,
-          startDate: DateTime.parse(startDate),
-          completedToday: recurringDeltaIsCompleted(id),
-        ),
-    ];
-    return out[0];
-  }
+  // Future<RecurringDelta> getRecurringDeltaById(int id) async {
+  //   final db = await _databaseService.db;
+  //   var data =
+  //       await db.query("recurring_delta", where: "id = ?", whereArgs: [id]);
+  //   var out = [
+  //     for (final {
+  //           'id': id as int,
+  //           'name': name as String,
+  //           'icon_src': iconSrc as String,
+  //           'interval': deltaInterval as String,
+  //           'weighting': weighting as int,
+  //           'minimum_volume': minimumVolume as int,
+  //           'effective_volume': effectiveVolume as int,
+  //           'optimal_volume': optimalVolume as int,
+  //           'start_date': startDate as String,
+  //         } in data)
+  //       RecurringDelta(
+  //         id: id,
+  //         name: name,
+  //         iconSrc: iconSrc,
+  //         deltaInterval: parseStringToDeltaInterval(deltaInterval),
+  //         weighting: weighting,
+  //         remainingFrequency: calculateRemainingFrequencyForRecurringDelta(id),
+  //         minimumVolume: minimumVolume,
+  //         effectiveVolume: effectiveVolume,
+  //         optimalVolume: optimalVolume,
+  //         startDate: DateTime.parse(startDate),
+  //         completedToday: recurringDeltaIsCompleted(id),
+  //       ),
+  //   ];
+  //   return out[0];
+  // }
 
   Future<String> getRecurringDeltaNameById(int id) async {
     final db = await _databaseService.db;
@@ -126,5 +127,38 @@ class DatabaseRecurringDeltaService {
         DateTime.parse(startDate),
     ];
     return out[0];
+  }
+
+  Future<void> insertNewCompletion(int deltaId) async {
+    final db = await _databaseService.db;
+    var now = DateTime.now();
+    await db.rawInsert(
+      "INSERT INTO delta_progress (delta_id, completed_at)",
+      [deltaId, now.toIso8601String()],
+    );
+  }
+
+  Future<void> deleteMostRecentCompletion(int deltaId) async {
+    final db = await _databaseService.db;
+
+    // Selects all where deltaId
+    var data = await db.query("delta_progress",
+        columns: ['id', 'completed_at'],
+        where: "delta_id = ?",
+        whereArgs: [deltaId]);
+    var list = [
+      for (final {'id': id as int, 'completed_at': completedAt as String}
+          in data)
+        DeltaProgress(
+            id: id, deltaId: deltaId, completedAt: DateTime.parse(completedAt)),
+    ];
+
+    // List: New -> Old
+    list.sort((a, b) => b.completedAt.compareTo(a.completedAt));
+
+    DeltaProgress removedItem = list[0];
+
+    await db
+        .delete("delta_progress", where: 'id = ?', whereArgs: [removedItem.id]);
   }
 }
