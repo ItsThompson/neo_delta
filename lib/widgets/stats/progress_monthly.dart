@@ -26,13 +26,13 @@ class _MyWidgetState extends State<MonthlyProgress> {
   ];
 
   int get startingIndex {
-    DateTime firstDayOfMonth = DateTime.utc(now.year, now.month, 1);
+    DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
 
     return firstDayOfMonth.weekday - 1;
   }
 
   int get itemsInThisMonth {
-    DateTime lastDayOfMonth = DateTime.utc(now.year, now.month + 1, 1)
+    DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 1)
         .subtract(const Duration(days: 1));
     return lastDayOfMonth.day;
   }

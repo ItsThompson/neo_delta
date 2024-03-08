@@ -6,52 +6,70 @@ import 'package:neo_delta/models/stats.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
 import 'package:neo_delta/widgets/stats/progress_monthly.dart';
 
-String getRecurringDeltaNameById(int id) {
-  return "GYM";
+// TODO: REMOVE
+bool recurringDeltaIsCompleted(int id){
+  return true;
 }
 
-// TODO: CALCULATIONS
+
+// TODO: REMOVE
 double getRecurringDeltaSuccessRateFromId(int id) {
+  // Out of 100
+  // Recurring Delta
+  // Get Optimal Volume
+  // Get Interval
+  // Get DeltaProgress DateAcomplished
   return 50;
 }
 
-DeltaInterval getRecurringDeltaIntervalById(int id) {
-  return DeltaInterval.day;
-}
-
-int getMinimumVolumeFromId(int id) {
-  return 1;
-}
-
-int getEffectiveVolumeFromId(int id) {
-  return 2;
-}
-
-int getOptimalVolumeFromId(int id) {
-  return 4;
-}
-
-int getWeightingFromId(int id) {
-  return 5;
-}
-
-DateTime getStartDateFromId(int id) {
-  return DateTime.now();
-}
-
-// TODO: CALCULATIONS
+// TODO: REMOVE
 int getLongestStreakFromId(int id) {
   return 5;
 }
 
-// TODO: CALCULATIONS
+// TODO: REMOVE
 double getAllTimeDeltaPercentageFromId(int id) {
   return 50;
 }
 
-// TODO: CALCULATIONS
+// TODO: REMOVE
 double getThisMonthDeltaPercentageFromId(int id) {
   return 4;
+}
+
+// TODO: REMOVE
+String getRecurringDeltaNameById(int id) {
+  return "GYM";
+}
+
+// TODO: REMOVE
+DeltaInterval getRecurringDeltaIntervalById(int id) {
+  return DeltaInterval.day;
+}
+
+// TODO: REMOVE
+int getMinimumVolumeFromId(int id) {
+  return 1;
+}
+
+// TODO: REMOVE
+int getEffectiveVolumeFromId(int id) {
+  return 2;
+}
+
+// TODO: REMOVE
+int getOptimalVolumeFromId(int id) {
+  return 4;
+}
+
+// TODO: REMOVE
+int getWeightingFromId(int id) {
+  return 5;
+}
+
+// TODO: REMOVE
+DateTime getStartDateFromId(int id) {
+  return DateTime.now();
 }
 
 class RecurringDeltaPage extends StatefulWidget {

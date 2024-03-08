@@ -108,13 +108,13 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
           widget.initRecurringDelta.remainingFrequency;
     }
 
-    // TODO: Business logic to update database
     void incrementRemaining() {
       if (canIncrement()) {
         setState(() {
           _isComplete = false;
           remainingFrequency += 1;
-          DatabaseRecurringDeltaService().insertNewCompletion(recurringDelta.id);
+          DatabaseRecurringDeltaService()
+              .insertNewCompletion(recurringDelta.id);
         });
       }
     }
@@ -123,7 +123,8 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
       setState(() {
         _isComplete = true;
         remainingFrequency -= 1;
-          DatabaseRecurringDeltaService().deleteMostRecentCompletion(recurringDelta.id);
+        DatabaseRecurringDeltaService()
+            .deleteMostRecentCompletion(recurringDelta.id);
       });
     }
 

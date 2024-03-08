@@ -101,7 +101,7 @@ class StatsData {
     List<(DateTime, double)> progress = [];
     Random random = Random();
     double randomNumber;
-    DateTime dateTime = DateTime.utc(
+    DateTime dateTime = DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     for (var i = 0; i < length; i++) {

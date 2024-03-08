@@ -60,26 +60,69 @@ String getDeltaIntervalPeriodString(DeltaInterval interval) {
   }
 }
 
-DeltaInterval parseStringToDeltaInterval(String deltaIntervalString){
+DeltaInterval parseStringToDeltaInterval(String deltaIntervalString) {
   switch (deltaIntervalString) {
-      case "DAILY":
-        return DeltaInterval.day;
-      case "WEEK":
-        return DeltaInterval.week;
-      case "MONTH":
-        return DeltaInterval.month;
-      default:
-        return DeltaInterval.day; // Default
-    }
+    case "DAILY":
+      return DeltaInterval.day;
+    case "WEEK":
+      return DeltaInterval.week;
+    case "MONTH":
+      return DeltaInterval.month;
+    default:
+      return DeltaInterval.day; // Default
+  }
 }
 
-int calculateRemainingFrequencyForRecurringDelta(int id){
-  // TODO: Remaining Frequency until Optimal Volume
-  return 0;
+DateTime getCutoffDateOfDeltaInterval(DeltaInterval interval) {
+  DateTime now = DateTime.now();
+
+  switch (interval) {
+    case DeltaInterval.day:
+      return DateTime(now.year, now.month, now.day);
+    case DeltaInterval.week:
+      DateTime monday = now.subtract(Duration(days: now.weekday - 1));
+      return DateTime(monday.year, monday.month, monday.day);
+    case DeltaInterval.month:
+      return DateTime(now.year, now.month, 1);
+  }
 }
 
-
-bool recurringDeltaIsCompleted(int id){
-  // TODO 
-  return true;
+DateTime startOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
+  switch (interval) {
+    case DeltaInterval.day:
+      return DateTime(dateTime.year, dateTime.month, dateTime.day);
+    case DeltaInterval.week:
+      DateTime monday = dateTime.subtract(Duration(days: dateTime.weekday - 1));
+      return DateTime(monday.year, monday.month, monday.day);
+    case DeltaInterval.month:
+      return DateTime(dateTime.year, dateTime.month, 1);
+  }
 }
+
+// List<DateTime> rangeOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
+//   switch (interval) {
+//     case DeltaInterval.day:
+//       DateTime startOfDay =
+//           DateTime(dateTime.year, dateTime.month, dateTime.day);
+//       DateTime endOfDay =
+//           DateTime(dateTime.year, dateTime.month, dateTime.day + 1)
+//               .subtract(const Duration(seconds: 1));
+//       return <DateTime>[startOfDay, endOfDay];
+//     case DeltaInterval.week:
+//       DateTime monday = dateTime.subtract(Duration(days: dateTime.weekday - 1));
+//       DateTime startOfMonday = DateTime(monday.year, monday.month, monday.day);
+//       DateTime endOfSunday = startOfMonday
+//           .add(const Duration(days: 7))
+//           .subtract(const Duration(seconds: 1));
+//       return <DateTime>[startOfMonday, endOfSunday];
+//     case DeltaInterval.month:
+//       DateTime beginningOfFirstDayOfMonth =
+//           DateTime(dateTime.year, dateTime.month, 1);
+//       DateTime endOfLastDayOfMonth = DateTime(
+//               beginningOfFirstDayOfMonth.year,
+//               beginningOfFirstDayOfMonth.month + 1,
+//               beginningOfFirstDayOfMonth.day)
+//           .subtract(const Duration(seconds: 1));
+//       return <DateTime>[beginningOfFirstDayOfMonth, endOfLastDayOfMonth];
+//   }
+// }

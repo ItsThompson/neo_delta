@@ -14,10 +14,8 @@ Future<String> getRandomPhrase() async {
   return data['phrases'][index];
 }
 
-String thirtyDayProgress() {
-  // TODO: Thirty Day Calculation
+String getThisMonthDeltaPercentage() {
   Random random = Random();
-  // MAX: (1.01)^30 = 0.34784892
   int percentageProgress = random.nextInt(35);
   return " $percentageProgress% ";
 }
@@ -81,9 +79,9 @@ class SentenceSummary extends StatelessWidget {
                       upOrDown(),
                       // PERCENTAGE
                       TextSpan(
-                          text: thirtyDayProgress(),
+                          text: getThisMonthDeltaPercentage(),
                           style: const TextStyle(fontWeight: FontWeight.bold)),
-                      const TextSpan(text: "compared to 30 days ago. "),
+                      const TextSpan(text: "this month. "),
                       // Cheerful Phrase
                       TextSpan(
                           text: snapshot.data,
