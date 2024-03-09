@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neo_delta/database/database_recurring_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
@@ -19,8 +20,10 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
 
   int minVol = 1, effectiveVol = 1, optimalVol = 1, weighting = 1;
 
-  int maxMinVol = 99, maxEffectiveVol = 99, maxOptimalVol = 99, maxWeighting = 10;
-
+  int maxMinVol = 99,
+      maxEffectiveVol = 99,
+      maxOptimalVol = 99,
+      maxWeighting = 10;
 
   bool showText = false;
 
@@ -141,8 +144,21 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
               showText = true;
             });
           } else {
-            print(
-                "\n task name: $name\n interval: $interval\n minimumVolume: $minVol\n effectiveVolume: $effectiveVol\n optimalVolume: $optimalVol\n weighting: $weighting"); // TODO: Business logic to write to database.
+            RecurringDelta newRecurringDelta = RecurringDelta(
+                id: 0, // Not needed
+                name: name,
+                iconSrc: "assets/landmark.png", // NOTE: smart icon selection (tag system?)
+                deltaInterval: interval,
+                weighting: weighting,
+                remainingFrequency: optimalVol, // Not needed
+                minimumVolume: minVol,
+                effectiveVolume: effectiveVol,
+                optimalVolume: optimalVol,
+                startDate: DateTime.now(),
+                completedToday: false);
+
+            DatabaseRecurringDeltaService()
+                .insertNewRecurringDelta(newRecurringDelta);
             context.pop();
           }
         },

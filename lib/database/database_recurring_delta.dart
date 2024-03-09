@@ -344,4 +344,20 @@ class DatabaseRecurringDeltaService {
     }
     return allTimeDelta * 100; // Percentage
   }
+
+  Future<void> insertNewRecurringDelta(RecurringDelta recurringDelta) async {
+    final db = await _databaseService.db;
+    await db.rawInsert(
+        "INSERT INTO recurring_delta (name, icon_src, interval, weighting, minimum_volume, effective_volume, optimal_volume, start_date) VALUES (?,?,?,?,?,?,?,?)",
+        [
+        recurringDelta.name,
+        recurringDelta.iconSrc, 
+        recurringDelta.deltaInterval.toString(),
+        recurringDelta.weighting,
+        recurringDelta.minimumVolume,
+        recurringDelta.effectiveVolume,
+        recurringDelta.optimalVolume,
+        recurringDelta.startDate,
+        ]);
+  }
 }
