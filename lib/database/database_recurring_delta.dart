@@ -269,11 +269,80 @@ class DatabaseRecurringDeltaService {
     return longestStreak;
   }
 
+  // TODO: CALCULATIONS
   Future<double> getAllTimeDeltaPercentageFromId(int deltaId) async {
-    return 0;
+    final int minimumVolume = await getMinimumVolumeFromId(deltaId);
+    final int effectiveVolume = await getEffectiveVolumeFromId(deltaId);
+    final int optimalVolume = await getOptimalVolumeFromId(deltaId);
+    final DeltaInterval interval = await getRecurringDeltaIntervalById(deltaId);
+    final DateTime startDate = await getStartDateFromId(deltaId);
+    final List<DeltaProgress> list =
+        await getDeltaProgressSortedByRecentToOld(deltaId);
+
+    SplayTreeMap<DateTime, int> intervalCount = SplayTreeMap<DateTime, int>();
+    // Key: Starting DateTime Interval,
+    // Value: Count
+    // SplayTreeMap -> Keys are sorted (Ascending)
+
+    for (final deltaProgress in list) {
+      DateTime beginning =
+          startOfDeltaInterval(interval, deltaProgress.completedAt);
+      intervalCount.update(beginning, (value) => ++value, ifAbsent: () => 1);
+    }
+
+    // List of every startOfInterval since startDate til today.
+    List<DateTime> listOfStartOfIntervalDateTimes =
+        getStartOfIntervalDateTimesSinceDate(interval, startDate);
+
+    double allTimeDelta = 0;
+
+    for (final start in listOfStartOfIntervalDateTimes) {
+      if (intervalCount.containsKey(start)) {
+        double delta = calculateDelta(intervalCount[start]!, minimumVolume,
+            effectiveVolume, optimalVolume);
+        allTimeDelta += delta;
+      } else {
+        allTimeDelta -= 1;
+      }
+    }
+    return allTimeDelta * 100; // Percentage
   }
 
   Future<double> getThisMonthDeltaPercentageFromId(int deltaId) async {
-    return 0;
+    final int minimumVolume = await getMinimumVolumeFromId(deltaId);
+    final int effectiveVolume = await getEffectiveVolumeFromId(deltaId);
+    final int optimalVolume = await getOptimalVolumeFromId(deltaId);
+    final DeltaInterval interval = await getRecurringDeltaIntervalById(deltaId);
+    final List<DeltaProgress> list =
+        await getDeltaProgressSortedByRecentToOld(deltaId);
+
+    SplayTreeMap<DateTime, int> intervalCount = SplayTreeMap<DateTime, int>();
+    // Key: Starting DateTime Interval,
+    // Value: Count
+    // SplayTreeMap -> Keys are sorted (Ascending)
+
+    for (final deltaProgress in list) {
+      DateTime beginning =
+          startOfDeltaInterval(interval, deltaProgress.completedAt);
+      intervalCount.update(beginning, (value) => ++value, ifAbsent: () => 1);
+    }
+
+    // List of every startOfInterval since startDate til today.
+    DateTime now = DateTime.now();
+    List<DateTime> listOfStartOfIntervalDateTimes =
+        getStartOfIntervalDateTimesSinceDate(interval, DateTime(now.year, now.month, 1));
+
+    double allTimeDelta = 0;
+
+    for (final start in listOfStartOfIntervalDateTimes) {
+      if (intervalCount.containsKey(start)) {
+        double delta = calculateDelta(intervalCount[start]!, minimumVolume,
+            effectiveVolume, optimalVolume);
+        allTimeDelta += delta;
+      } else {
+        allTimeDelta -= 1;
+      }
+    }
+    return allTimeDelta * 100; // Percentage
   }
 }

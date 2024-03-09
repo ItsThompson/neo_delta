@@ -99,6 +99,39 @@ DateTime startOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
   }
 }
 
+List<DateTime> getStartOfIntervalDateTimesSinceDate(
+    DeltaInterval interval, DateTime date) {
+  List<DateTime> list = [];
+  DateTime now = DateTime.now();
+
+  list.add(date);
+  DateTime nextDate = startOfDeltaInterval(interval, date);
+
+  switch (interval) {
+    case DeltaInterval.day:
+      while (nextDate.isBefore(now) ||
+          nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
+        list.add(nextDate);
+        nextDate.add(const Duration(days: 1));
+      }
+      return list;
+    case DeltaInterval.week:
+      while (nextDate.isBefore(now) ||
+          nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
+        list.add(nextDate);
+        nextDate.add(const Duration(days: 7));
+      }
+      return list;
+    case DeltaInterval.month:
+      while (nextDate.isBefore(now) ||
+          nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
+        list.add(nextDate);
+        nextDate = DateTime(nextDate.year, nextDate.month + 1, 1);
+      }
+      return list;
+  }
+}
+
 // List<DateTime> rangeOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
 //   switch (interval) {
 //     case DeltaInterval.day:

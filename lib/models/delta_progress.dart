@@ -11,21 +11,20 @@ class DeltaProgress {
 
 double calculateDelta(
     int volume, int minimumVolume, int effectiveVolume, int optimalVolume) {
-  // See: https://www.desmos.com/calculator/ftvdfaazkp
+  // See: https://www.desmos.com/calculator/t57he69cvo
   if (0 <= volume && volume < minimumVolume) {
-    return sin((pi * volume) / (2 * minimumVolume));
+    return sin((pi * volume) / (2 * minimumVolume)) - 1;
   }
 
   if (minimumVolume <= volume && volume < effectiveVolume) {
-    return 1;
+    return 0;
   }
 
   if (effectiveVolume <= volume &&
       volume < (3 * optimalVolume - 2 * effectiveVolume)) {
     return sin(pi *
-            (volume - effectiveVolume) /
-            (2 * (optimalVolume - effectiveVolume))) +
-        1;
+        (volume - effectiveVolume) /
+        (2 * (optimalVolume - effectiveVolume)));
   }
 
   return 0;
