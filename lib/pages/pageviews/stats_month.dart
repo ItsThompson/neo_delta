@@ -30,5 +30,6 @@ class _StatsPageViewMonthState extends State<StatsPageViewMonth> {
         //     width: double.infinity,
         //     margin: const EdgeInsets.symmetric(horizontal: 30),
         //     child: Text(
-        //         "heelo, this paije is FFOOHSST OVE THUH MUHNFF.\nshouldUpdateStats: ${context.watch<StatsFilter>().shouldUpdateStats.toString()}") // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
+        //         "heelo, this paije is FFOOHSST OVE THUH MUHNFF.\nshouldUpdateStats: ${context.watch<StatsFilter>().shouldUpdateStats.toString()}") 
         //     ),
+        // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false

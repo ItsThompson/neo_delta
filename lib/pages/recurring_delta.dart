@@ -1,75 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:neo_delta/database/database_recurring_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
 import 'package:neo_delta/models/stats.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
 import 'package:neo_delta/widgets/stats/progress_monthly.dart';
 
-// TODO: REMOVE
-bool recurringDeltaIsCompleted(int id){
-  return true;
+class DeltaProfile {
+  final DeltaInterval interval;
+  final int minimumVolume;
+  final int effectiveVolume;
+  final int optimalVolume;
+  final int weighting;
+
+  DeltaProfile(
+      {required this.interval,
+      required this.minimumVolume,
+      required this.effectiveVolume,
+      required this.optimalVolume,
+      required this.weighting});
 }
 
+Future<DeltaProfile> getDeltaProfileData(int deltaId) async {
+  DeltaInterval interval = await DatabaseRecurringDeltaService()
+      .getRecurringDeltaIntervalById(deltaId);
+  int minimumVolume =
+      await DatabaseRecurringDeltaService().getMinimumVolumeFromId(deltaId);
+  int effectiveVolume =
+      await DatabaseRecurringDeltaService().getEffectiveVolumeFromId(deltaId);
+  int optimalVolume =
+      await DatabaseRecurringDeltaService().getOptimalVolumeFromId(deltaId);
+  int weighting =
+      await DatabaseRecurringDeltaService().getWeightingFromId(deltaId);
 
-// TODO: REMOVE
-double getRecurringDeltaSuccessRateFromId(int id) {
-  // Out of 100
-  // Recurring Delta
-  // Get Optimal Volume
-  // Get Interval
-  // Get DeltaProgress DateAcomplished
-  return 50;
+  return DeltaProfile(
+      interval: interval,
+      minimumVolume: minimumVolume,
+      effectiveVolume: effectiveVolume,
+      optimalVolume: optimalVolume,
+      weighting: weighting);
 }
 
-// TODO: REMOVE
-int getLongestStreakFromId(int id) {
-  return 5;
+class DeltaStats {
+  final int longestStreak;
+  final double allTimeDeltaPercentage;
+  final double currentMonthDeltaPercentage;
+
+  DeltaStats(
+      {required this.longestStreak,
+      required this.allTimeDeltaPercentage,
+      required this.currentMonthDeltaPercentage});
 }
 
-// TODO: REMOVE
-double getAllTimeDeltaPercentageFromId(int id) {
-  return 50;
-}
+Future<DeltaStats> getDeltaStats(int deltaId) async {
+  int longestStreak =
+      await DatabaseRecurringDeltaService().getLongestStreakFromId(deltaId);
+  double allTimeDeltaPercentage = await DatabaseRecurringDeltaService()
+      .getAllTimeDeltaPercentageFromId(deltaId);
+  double currentMonthDeltaPercentage = await DatabaseRecurringDeltaService()
+      .getThisMonthDeltaPercentageFromId(deltaId);
 
-// TODO: REMOVE
-double getThisMonthDeltaPercentageFromId(int id) {
-  return 4;
-}
-
-// TODO: REMOVE
-String getRecurringDeltaNameById(int id) {
-  return "GYM";
-}
-
-// TODO: REMOVE
-DeltaInterval getRecurringDeltaIntervalById(int id) {
-  return DeltaInterval.day;
-}
-
-// TODO: REMOVE
-int getMinimumVolumeFromId(int id) {
-  return 1;
-}
-
-// TODO: REMOVE
-int getEffectiveVolumeFromId(int id) {
-  return 2;
-}
-
-// TODO: REMOVE
-int getOptimalVolumeFromId(int id) {
-  return 4;
-}
-
-// TODO: REMOVE
-int getWeightingFromId(int id) {
-  return 5;
-}
-
-// TODO: REMOVE
-DateTime getStartDateFromId(int id) {
-  return DateTime.now();
+  return DeltaStats(
+    longestStreak: longestStreak,
+    allTimeDeltaPercentage: allTimeDeltaPercentage,
+    currentMonthDeltaPercentage: currentMonthDeltaPercentage,
+  );
 }
 
 class RecurringDeltaPage extends StatefulWidget {
@@ -83,18 +79,6 @@ class RecurringDeltaPage extends StatefulWidget {
 class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
   @override
   Widget build(BuildContext context) {
-    String name = getRecurringDeltaNameById(widget.id);
-    double successPercentage = getRecurringDeltaSuccessRateFromId(widget.id);
-    DeltaInterval interval = getRecurringDeltaIntervalById(widget.id);
-    int minimumVolume = getMinimumVolumeFromId(widget.id);
-    int effectiveVolume = getEffectiveVolumeFromId(widget.id);
-    int optimalVolume = getOptimalVolumeFromId(widget.id);
-    int weighting = getWeightingFromId(widget.id);
-    DateTime startDate = getStartDateFromId(widget.id);
-    int longestStreak = getLongestStreakFromId(widget.id);
-    double allTimeDeltaPercentage = getAllTimeDeltaPercentageFromId(widget.id);
-    double currentMonthDeltaPercentage =
-        getThisMonthDeltaPercentageFromId(widget.id);
     return Scaffold(
         appBar: const AppBarWithBackButton(title: "RECURRING DELTA"),
         body: Container(
@@ -104,12 +88,24 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
             shrinkWrap: true,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Text(
-                  name,
-                  style: const TextStyle(fontSize: 36),
-                ),
-              ),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: FutureBuilder<String>(
+                      future: DatabaseRecurringDeltaService()
+                          .getRecurringDeltaNameById(widget.id),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text(
+                            "DELTA NAME",
+                            style: TextStyle(fontSize: 36),
+                          );
+                        }
+
+                        return Text(
+                          snapshot.data!,
+                          style: const TextStyle(fontSize: 36),
+                        );
+                      })),
               const SizedBox(height: 30),
               IntrinsicHeight(
                   child: Padding(
@@ -117,7 +113,20 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SuccessPieChart(percentage: successPercentage),
+                    FutureBuilder<double>(
+                        future: DatabaseRecurringDeltaService()
+                            .getRecurringDeltaSuccessRateFromId(widget.id),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: mainTheme.colorScheme.primary,
+                            ));
+                          }
+
+                          return SuccessPieChart(percentage: snapshot.data!);
+                        }),
                     Flexible(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -130,41 +139,85 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              height: 140,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("Delta Profile",
-                                      style: TextStyle(fontSize: 16)),
-                                  Text(
-                                      "${getDeltaIntervalAdverbString(interval)} TASK",
-                                      style: const TextStyle(fontSize: 12)),
-                                  Text(
-                                      "MV: $minimumVolume ${minimumVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
-                                      style: const TextStyle(fontSize: 12)),
-                                  Text(
-                                      "EV: $effectiveVolume ${effectiveVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
-                                      style: const TextStyle(fontSize: 12)),
-                                  Text(
-                                      "OV: $optimalVolume ${optimalVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
-                                      style: const TextStyle(fontSize: 12)),
-                                  Text("WEIGHTING: $weighting/10",
-                                      style: const TextStyle(fontSize: 12)),
-                                ],
-                              ),
-                            ),
-                            Center(
-                              child: Text(
-                                  "STARTED ON ${startDate.year}-${startDate.month.toString().padLeft(2, "0")}-${startDate.day.toString().padLeft(2, "0")}",
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: mainTheme
-                                          .colorScheme.inverseSurface
-                                          .withOpacity(0.5))),
-                            )
+                            FutureBuilder<DeltaProfile>(
+                                future: getDeltaProfileData(widget.id),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: CircularProgressIndicator(
+                                      color: mainTheme.colorScheme.primary,
+                                    ));
+                                  }
+
+                                  final DeltaInterval interval =
+                                      snapshot.data!.interval;
+                                  final int minimumVolume =
+                                      snapshot.data!.minimumVolume;
+                                  final int effectiveVolume =
+                                      snapshot.data!.effectiveVolume;
+                                  final int optimalVolume =
+                                      snapshot.data!.optimalVolume;
+                                  final int weighting =
+                                      snapshot.data!.weighting;
+
+                                  return SizedBox(
+                                    height: 140,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("Delta Profile",
+                                            style: TextStyle(fontSize: 16)),
+                                        Text(
+                                            "${getDeltaIntervalAdverbString(interval)} TASK",
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                        Text(
+                                            "MV: $minimumVolume ${minimumVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                        Text(
+                                            "EV: $effectiveVolume ${effectiveVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                        Text(
+                                            "OV: $optimalVolume ${optimalVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(interval)}",
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                        Text("WEIGHTING: $weighting/10",
+                                            style:
+                                                const TextStyle(fontSize: 12))
+                                      ],
+                                    ),
+                                  );
+                                }),
+                            FutureBuilder<DateTime>(
+                                future: DatabaseRecurringDeltaService()
+                                    .getStartDateFromId(widget.id),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: CircularProgressIndicator(
+                                      color: mainTheme.colorScheme.primary,
+                                    ));
+                                  }
+
+                                  final DateTime startDate = snapshot.data!;
+
+                                  return Center(
+                                    child: Text(
+                                        "STARTED ON ${startDate.year}-${startDate.month.toString().padLeft(2, "0")}-${startDate.day.toString().padLeft(2, "0")}",
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: mainTheme
+                                                .colorScheme.inverseSurface
+                                                .withOpacity(0.5))),
+                                  );
+                                }),
                           ],
                         ),
                       ),
@@ -173,30 +226,45 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                 ),
               )),
               const SizedBox(height: 30),
-              Container(
-                width: double.infinity,
-                height: 150,
-                margin: const EdgeInsets.symmetric(horizontal: 30),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: mainTheme.colorScheme.surface),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("LONGEST STREAK $longestStreak",
-                        style: const TextStyle(fontSize: 18)),
-                    Text(
-                        "ALL TIME DELTA: ${allTimeDeltaPercentage.toStringAsFixed(2)}%",
-                        style: const TextStyle(fontSize: 18)),
-                    Text(
-                        "THIS MONTH'S DELTA: ${currentMonthDeltaPercentage.toStringAsFixed(2)}%",
-                        style: const TextStyle(fontSize: 18)),
-                  ],
-                ),
-              ),
+              FutureBuilder<DeltaStats>(
+                  future: getDeltaStats(widget.id),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: mainTheme.colorScheme.primary,
+                      ));
+                    }
+
+                    final int longestStreak = snapshot.data!.longestStreak;
+                    final double allTimeDeltaPercentage = snapshot.data!.allTimeDeltaPercentage;
+                    final double currentMonthDeltaPercentage = snapshot.data!.currentMonthDeltaPercentage;
+
+                    return Container(
+                      width: double.infinity,
+                      height: 150,
+                      margin: const EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: mainTheme.colorScheme.surface),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("LONGEST STREAK $longestStreak",
+                              style: const TextStyle(fontSize: 18)),
+                          Text(
+                              "ALL TIME DELTA: ${allTimeDeltaPercentage.toStringAsFixed(2)}%",
+                              style: const TextStyle(fontSize: 18)),
+                          Text(
+                              "THIS MONTH'S DELTA: ${currentMonthDeltaPercentage.toStringAsFixed(2)}%",
+                              style: const TextStyle(fontSize: 18)),
+                        ],
+                      ),
+                    );
+                  }),
               const SizedBox(height: 30),
               const Center(
                 child: Text(
@@ -246,7 +314,7 @@ class _SuccessPieChartState extends State<SuccessPieChart> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("${widget.percentage}%"),
-                Text("SUCCESS"),
+                const Text("SUCCESS"),
               ],
             )
           ],

@@ -269,7 +269,6 @@ class DatabaseRecurringDeltaService {
     return longestStreak;
   }
 
-  // TODO: CALCULATIONS
   Future<double> getAllTimeDeltaPercentageFromId(int deltaId) async {
     final int minimumVolume = await getMinimumVolumeFromId(deltaId);
     final int effectiveVolume = await getEffectiveVolumeFromId(deltaId);
