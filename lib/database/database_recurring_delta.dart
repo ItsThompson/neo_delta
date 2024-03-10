@@ -7,6 +7,40 @@ import 'package:neo_delta/models/recurring_delta.dart';
 class DatabaseRecurringDeltaService {
   static final DatabaseService _databaseService = DatabaseService();
 
+  Future<List<RecurringDelta>> getAllRecurringDeltas() async {
+    final db = await _databaseService.db;
+    var data = await db.query("recurring_delta");
+    var out = [
+      for (final {
+            'id': id as int,
+            'name': name as String,
+            'icon_src': iconSrc as String,
+            'interval': deltaInterval as String,
+            'weighting': weighting as int,
+            'minimum_volume': minimumVolume as int,
+            'effective_volume': effectiveVolume as int,
+            'optimal_volume': optimalVolume as int,
+            'start_date': startDate as String,
+          } in data)
+        RecurringDelta(
+          id: id,
+          name: name,
+          iconSrc: iconSrc,
+          deltaInterval: parseStringToDeltaInterval(deltaInterval),
+          weighting: weighting,
+          remainingFrequency:
+              await calculateRemainingFrequencyForRecurringDelta(id),
+          minimumVolume: minimumVolume,
+          effectiveVolume: effectiveVolume,
+          optimalVolume: optimalVolume,
+          startDate: DateTime.parse(startDate),
+          completedToday: await recurringDeltaIsCompleted(id),
+        ),
+    ];
+
+    return out;
+  }
+
   Future<RecurringDelta> getRecurringDeltaById(int deltaId) async {
     final db = await _databaseService.db;
     var data = await db
@@ -122,7 +156,7 @@ class DatabaseRecurringDeltaService {
   Future<DateTime> getStartDateFromId(int deltaId) async {
     final db = await _databaseService.db;
     var data = await db.query("recurring_delta",
-        columns: ['startDate'], where: "id = ?", whereArgs: [deltaId]);
+        columns: ['start_date'], where: "id = ?", whereArgs: [deltaId]);
     var out = [
       for (final {
             'start_date': startDate as String,
@@ -230,6 +264,10 @@ class DatabaseRecurringDeltaService {
       }
     }
 
+    if (intervalCount.isEmpty) {
+      return 0;
+    }
+
     return (isCompleted / intervalCount.values.length) * 100;
   }
 
@@ -269,14 +307,15 @@ class DatabaseRecurringDeltaService {
     return longestStreak;
   }
 
-  Future<double> getAllTimeDeltaPercentageFromId(int deltaId) async {
-    final int minimumVolume = await getMinimumVolumeFromId(deltaId);
-    final int effectiveVolume = await getEffectiveVolumeFromId(deltaId);
-    final int optimalVolume = await getOptimalVolumeFromId(deltaId);
-    final DeltaInterval interval = await getRecurringDeltaIntervalById(deltaId);
-    final DateTime startDate = await getStartDateFromId(deltaId);
+  Future<double> getAllTimeDeltaPercentageFromRecurringDelta(
+      RecurringDelta recurringDelta) async {
+    final int minimumVolume = recurringDelta.minimumVolume;
+    final int effectiveVolume = recurringDelta.effectiveVolume;
+    final int optimalVolume = recurringDelta.optimalVolume;
+    final DeltaInterval interval = recurringDelta.deltaInterval;
+    final DateTime startDate = recurringDelta.startDate;
     final List<DeltaProgress> list =
-        await getDeltaProgressSortedByRecentToOld(deltaId);
+        await getDeltaProgressSortedByRecentToOld(recurringDelta.id);
 
     SplayTreeMap<DateTime, int> intervalCount = SplayTreeMap<DateTime, int>();
     // Key: Starting DateTime Interval,
@@ -329,7 +368,8 @@ class DatabaseRecurringDeltaService {
     // List of every startOfInterval since startDate til today.
     DateTime now = DateTime.now();
     List<DateTime> listOfStartOfIntervalDateTimes =
-        getStartOfIntervalDateTimesSinceDate(interval, DateTime(now.year, now.month, 1));
+        getStartOfIntervalDateTimesSinceDate(
+            interval, DateTime(now.year, now.month, 1));
 
     double allTimeDelta = 0;
 
@@ -350,14 +390,14 @@ class DatabaseRecurringDeltaService {
     await db.rawInsert(
         "INSERT INTO recurring_delta (name, icon_src, interval, weighting, minimum_volume, effective_volume, optimal_volume, start_date) VALUES (?,?,?,?,?,?,?,?)",
         [
-        recurringDelta.name,
-        recurringDelta.iconSrc, 
-        recurringDelta.deltaInterval.toString(),
-        recurringDelta.weighting,
-        recurringDelta.minimumVolume,
-        recurringDelta.effectiveVolume,
-        recurringDelta.optimalVolume,
-        recurringDelta.startDate,
+          recurringDelta.name,
+          recurringDelta.iconSrc,
+          recurringDelta.deltaInterval.toString(),
+          recurringDelta.weighting,
+          recurringDelta.minimumVolume,
+          recurringDelta.effectiveVolume,
+          recurringDelta.optimalVolume,
+          recurringDelta.startDate.toString(),
         ]);
   }
 }

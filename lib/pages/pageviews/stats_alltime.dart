@@ -25,6 +25,5 @@ class _StatsPageViewAllTimeState extends State<StatsPageViewAllTime> {
   }
 }
 
-
 // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
 // context.watch<StatsFilter>().shouldUpdateStats

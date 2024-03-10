@@ -32,11 +32,11 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
   }
 
   effectiveVolCallback(value) {
-    minVol = value;
+    effectiveVol = value;
   }
 
   optimalVolCallback(value) {
-    minVol = value;
+    optimalVol = value;
   }
 
   weightingCallback(value) {
@@ -158,7 +158,7 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
                 completedToday: false);
 
             DatabaseRecurringDeltaService()
-                .insertNewRecurringDelta(newRecurringDelta);
+                .insertNewRecurringDelta(newRecurringDelta); // TODO: NEED TO UPDATE GRID AFTER NEW INSERT
             context.pop();
           }
         },

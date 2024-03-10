@@ -61,12 +61,13 @@ String getDeltaIntervalPeriodString(DeltaInterval interval) {
 }
 
 DeltaInterval parseStringToDeltaInterval(String deltaIntervalString) {
+  // deltaIntervalString is taken from DB
   switch (deltaIntervalString) {
-    case "DAILY":
+    case "DeltaInterval.day":
       return DeltaInterval.day;
-    case "WEEK":
+    case "DeltaInterval.week":
       return DeltaInterval.week;
-    case "MONTH":
+    case "DeltaInterval.month":
       return DeltaInterval.month;
     default:
       return DeltaInterval.day; // Default
@@ -104,32 +105,34 @@ List<DateTime> getStartOfIntervalDateTimesSinceDate(
   List<DateTime> list = [];
   DateTime now = DateTime.now();
 
-  list.add(date);
   DateTime nextDate = startOfDeltaInterval(interval, date);
+
+  if (interval == DeltaInterval.month) {
+    while (nextDate.isBefore(now) ||
+        nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
+      list.add(nextDate);
+      nextDate = DateTime(nextDate.year, nextDate.month + 1, 1);
+    }
+    return list;
+  }
+
+  Duration addDuration = const Duration(days: 1);
 
   switch (interval) {
     case DeltaInterval.day:
-      while (nextDate.isBefore(now) ||
-          nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
-        list.add(nextDate);
-        nextDate.add(const Duration(days: 1));
-      }
-      return list;
+      addDuration = const Duration(days: 1);
     case DeltaInterval.week:
-      while (nextDate.isBefore(now) ||
-          nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
-        list.add(nextDate);
-        nextDate.add(const Duration(days: 7));
-      }
-      return list;
-    case DeltaInterval.month:
-      while (nextDate.isBefore(now) ||
-          nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
-        list.add(nextDate);
-        nextDate = DateTime(nextDate.year, nextDate.month + 1, 1);
-      }
-      return list;
+      addDuration = const Duration(days: 7);
+    default:
+      break;
   }
+
+  while (nextDate.isBefore(now) ||
+      nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
+    list.add(nextDate);
+    nextDate = nextDate.add(addDuration);
+  }
+  return list;
 }
 
 // List<DateTime> rangeOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
