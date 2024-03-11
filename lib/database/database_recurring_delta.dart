@@ -6,7 +6,6 @@ import 'package:neo_delta/models/delta_progress.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
 import 'package:provider/provider.dart';
 
-// TODO: update all relevant functions in DatabaseRecurringDeltaService to check if provider has list first.
 class DatabaseRecurringDeltaService {
   static final DatabaseService _databaseService = DatabaseService();
 

@@ -88,6 +88,7 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
         setState(() {
           _isComplete = false;
           remainingFrequency += 1;
+          // TODO: Doesnt Work! + DatabaseService (See Line 182)
           DatabaseRecurringDeltaService()
               .insertNewCompletion(recurringDelta.id);
         });
@@ -98,6 +99,7 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
       setState(() {
         _isComplete = true;
         remainingFrequency -= 1;
+          // TODO: Need testing! + DatabaseService (See Line 182)
         DatabaseRecurringDeltaService()
             .deleteMostRecentCompletion(recurringDelta.id);
       });
