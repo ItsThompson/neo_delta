@@ -4,105 +4,52 @@ import 'package:go_router/go_router.dart';
 import 'package:neo_delta/database/database_recurring_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
-
-// List<RecurringDelta> recurringDeltas = [
-//   RecurringDelta(
-//     id: 0,
-//     name: "GYM",
-//     iconSrc: "assets/landmark.png",
-//     deltaInterval: DeltaInterval.week,
-//     weighting: 3,
-//     remainingFrequency: 6,
-//     minimumVolume: 6,
-//     effectiveVolume: 5,
-//     optimalVolume: 20,
-//     startDate: DateTime(2024),
-//     completedToday: false,
-//   ),
-//   RecurringDelta(
-//     id: 1,
-//     name: "PIANO",
-//     iconSrc: "assets/landmark.png",
-//     deltaInterval: DeltaInterval.month,
-//     weighting: 3,
-//     remainingFrequency: 20,
-//     minimumVolume: 6,
-//     effectiveVolume: 5,
-//     optimalVolume: 20,
-//     startDate: DateTime(2024),
-//     completedToday: false,
-//   ),
-//   RecurringDelta(
-//     id: 2,
-//     name: "RUN",
-//     iconSrc: "assets/landmark.png",
-//     deltaInterval: DeltaInterval.week,
-//     weighting: 3,
-//     remainingFrequency: 3,
-//     minimumVolume: 6,
-//     effectiveVolume: 5,
-//     optimalVolume: 20,
-//     startDate: DateTime(2024),
-//     completedToday: false,
-//   ),
-//   RecurringDelta(
-//     id: 3,
-//     name: "READ",
-//     iconSrc: "assets/landmark.png",
-//     deltaInterval: DeltaInterval.day,
-//     weighting: 3,
-//     remainingFrequency: 1,
-//     minimumVolume: 6,
-//     effectiveVolume: 5,
-//     optimalVolume: 20,
-//     startDate: DateTime(2024),
-//     completedToday: false,
-//   )
-// ];
+import 'package:provider/provider.dart';
 
 class RecurringDeltaGrid extends StatelessWidget {
   const RecurringDeltaGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<RecurringDelta>>(
-        future: DatabaseRecurringDeltaService().getAllRecurringDeltas(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: CircularProgressIndicator(
-              color: mainTheme.colorScheme.primary,
-            ));
-          }
+    return Consumer<ListOfRecurringDeltas>(
+        builder: (context, value, child) => FutureBuilder<List<RecurringDelta>>(
+            future: DatabaseRecurringDeltaService().getAllRecurringDeltas(context),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                    child: CircularProgressIndicator(
+                  color: mainTheme.colorScheme.primary,
+                ));
+              }
 
-          final List<RecurringDelta> recurringDeltas = snapshot.data!;
+              final List<RecurringDelta> recurringDeltas = snapshot.data!;
 
-          if (snapshot.hasData) {
-            if (recurringDeltas.isEmpty) {
-              return const Center(
-                child: Text('Create your first recurring delta!'),
-              );
-            }
-          }
+              if (snapshot.hasData) {
+                if (recurringDeltas.isEmpty) {
+                  return const Center(
+                    child: Text('Create your first recurring delta!'),
+                  );
+                }
+              }
 
-          if (snapshot.data == null) {
-            return const Center(
-              child: Text('No data'),
-            );
-          }
+              if (snapshot.data == null) {
+                return const Center(
+                  child: Text('No data'),
+                );
+              }
 
-          return Expanded(
-              child: Scrollbar(
-                  child: GridView.count(
-            crossAxisCount: 2,
-            mainAxisSpacing: 25,
-            crossAxisSpacing: 25,
-            children: List.generate(recurringDeltas.length, (index) {
-              return RecurringDeltaButton(
-                  initRecurringDelta: recurringDeltas[index]);
-            }),
-          )));
-        });
+              return Expanded(
+                  child: Scrollbar(
+                      child: GridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 25,
+                crossAxisSpacing: 25,
+                children: List.generate(recurringDeltas.length, (index) {
+                  return RecurringDeltaButton(
+                      initRecurringDelta: recurringDeltas[index]);
+                }),
+              )));
+            }));
   }
 }
 

@@ -1,13 +1,24 @@
 import 'dart:collection';
 
+import 'package:flutter/material.dart';
 import 'package:neo_delta/database/database.dart';
 import 'package:neo_delta/models/delta_progress.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:provider/provider.dart';
 
+// TODO: update all relevant functions in DatabaseRecurringDeltaService to check if provider has list first.
 class DatabaseRecurringDeltaService {
   static final DatabaseService _databaseService = DatabaseService();
 
-  Future<List<RecurringDelta>> getAllRecurringDeltas() async {
+  Future<List<RecurringDelta>> getAllRecurringDeltas(
+      BuildContext context) async {
+    List<RecurringDelta> providerRecurringDeltaList =
+        context.read<ListOfRecurringDeltas>().recurringDeltaList;
+
+    if (providerRecurringDeltaList.isNotEmpty) {
+      return providerRecurringDeltaList;
+    }
+
     final db = await _databaseService.db;
     var data = await db.query("recurring_delta");
     var out = [
@@ -37,6 +48,10 @@ class DatabaseRecurringDeltaService {
           completedToday: await recurringDeltaIsCompleted(id),
         ),
     ];
+
+    if (context.mounted) {
+      context.read<ListOfRecurringDeltas>().recurringDeltaList = out;
+    }
 
     return out;
   }

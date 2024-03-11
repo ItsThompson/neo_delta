@@ -74,7 +74,7 @@ class _StatsPageState extends State<StatsPage> {
               onPageChanged: (index) {
                 setState(() {
                   currentPageView = StatsPageView.values[index];
-                  context.read<StatsPageViewIndex>().index = index;
+                  context.read<StatsPageViewIndex>().index = index; // Setting index to be the current page's index.
                 });
               },
               controller: pageController,

@@ -1,3 +1,7 @@
+import 'dart:collection';
+
+import 'package:flutter/material.dart';
+
 enum DeltaInterval { day, week, month }
 
 // NOTE: smart icon selection (tag system?)
@@ -162,3 +166,20 @@ List<DateTime> getStartOfIntervalDateTimesSinceDate(
 //       return <DateTime>[beginningOfFirstDayOfMonth, endOfLastDayOfMonth];
 //   }
 // }
+
+class ListOfRecurringDeltas extends ChangeNotifier {
+  List<RecurringDelta> _recurringDeltaList = [];
+
+  UnmodifiableListView<RecurringDelta> get recurringDeltaList =>
+      UnmodifiableListView(_recurringDeltaList);
+
+  set recurringDeltaList(List<RecurringDelta> newRecurringDeltaList) {
+    _recurringDeltaList = newRecurringDeltaList;
+    notifyListeners();
+  }
+
+  void addToList(RecurringDelta newRecurringDelta) {
+    _recurringDeltaList.add(newRecurringDelta);
+    notifyListeners();
+  }
+}

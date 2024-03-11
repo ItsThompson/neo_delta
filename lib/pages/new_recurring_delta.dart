@@ -5,6 +5,7 @@ import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
 import 'package:neo_delta/widgets/buttons/inc_dec_with_label.dart';
+import 'package:provider/provider.dart';
 
 class NewRecurringPage extends StatefulWidget {
   const NewRecurringPage({super.key});
@@ -147,7 +148,8 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
             RecurringDelta newRecurringDelta = RecurringDelta(
                 id: 0, // Not needed
                 name: name,
-                iconSrc: "assets/landmark.png", // NOTE: smart icon selection (tag system?)
+                iconSrc:
+                    "assets/landmark.png", // NOTE: smart icon selection (tag system?)
                 deltaInterval: interval,
                 weighting: weighting,
                 remainingFrequency: optimalVol, // Not needed
@@ -157,8 +159,10 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
                 startDate: DateTime.now(),
                 completedToday: false);
 
-            DatabaseRecurringDeltaService()
-                .insertNewRecurringDelta(newRecurringDelta); // TODO: NEED TO UPDATE GRID AFTER NEW INSERT
+            DatabaseRecurringDeltaService().insertNewRecurringDelta(
+                newRecurringDelta);
+
+            context.read<ListOfRecurringDeltas>().addToList(newRecurringDelta);
             context.pop();
           }
         },

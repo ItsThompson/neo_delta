@@ -27,10 +27,5 @@ class _StatsPageViewWeekState extends State<StatsPageViewWeek> {
 }
 
 
-
-        // Container(
-        //     width: double.infinity,
-        //     margin: const EdgeInsets.symmetric(horizontal: 30),
-        //     child: Text(
-        //         "heelo, this paije is weeaak.\nshouldUpdateStats: ${context.watch<StatsFilter>().shouldUpdateStats.toString()}") // TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
-        //     ),
+// TODO: On "shouldUpdateStats" true: Update graphs and then set back to false
+// context.watch<StatsFilter>().shouldUpdateStats
