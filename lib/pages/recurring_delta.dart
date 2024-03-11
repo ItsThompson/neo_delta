@@ -33,14 +33,14 @@ class RecurringDeltaPageData {
       required this.allTimeDeltaPercentage,
       required this.currentMonthDeltaPercentage});
 
-  static Future<RecurringDeltaPageData> getData(int deltaId) async {
+  static Future<RecurringDeltaPageData> getData(int deltaId, BuildContext context) async {
     RecurringDelta recurringDelta =
-        await DatabaseRecurringDeltaService().getRecurringDeltaById(deltaId);
+        await DatabaseRecurringDeltaService().getRecurringDeltaById(deltaId, context);
 
     double successPercentage = await DatabaseRecurringDeltaService()
-        .getRecurringDeltaSuccessRateFromId(deltaId);
+        .getRecurringDeltaSuccessRateFromRecurringDelta(recurringDelta);
     int longestStreak =
-        await DatabaseRecurringDeltaService().getLongestStreakFromId(deltaId);
+        await DatabaseRecurringDeltaService().getLongestStreakFromRecurringDelta(recurringDelta);
 
 
     double allTimeDeltaPercentage = await DatabaseRecurringDeltaService()
@@ -48,7 +48,7 @@ class RecurringDeltaPageData {
 
 
     double currentMonthDeltaPercentage = await DatabaseRecurringDeltaService()
-        .getThisMonthDeltaPercentageFromId(deltaId);
+        .getThisMonthDeltaPercentageFromRecurringDelta(recurringDelta);
 
     return RecurringDeltaPageData(
         name: recurringDelta.name,
@@ -77,7 +77,7 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<RecurringDeltaPageData>(
-        future: RecurringDeltaPageData.getData(widget.id),
+        future: RecurringDeltaPageData.getData(widget.id, context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
