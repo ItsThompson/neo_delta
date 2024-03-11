@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:neo_delta/database/database_recurring_delta.dart';
 
 enum DeltaInterval { day, week, month }
 
@@ -178,8 +179,59 @@ class ListOfRecurringDeltas extends ChangeNotifier {
     notifyListeners();
   }
 
+  RecurringDelta? getRecurringDelta(int deltaId) {
+    for (var recurringDelta in recurringDeltaList) {
+      if (recurringDelta.id == deltaId) {
+        return recurringDelta;
+      }
+    }
+    return null;
+  }
+
   void addToList(RecurringDelta newRecurringDelta) {
     _recurringDeltaList.add(newRecurringDelta);
+    notifyListeners();
+  }
+
+  void incrementFrequency(int deltaId) async {
+    for (var i = 0; i < _recurringDeltaList.length; i++) {
+      if (_recurringDeltaList[i].id == deltaId) {
+        RecurringDelta newRecurringDelta = RecurringDelta(
+            id: _recurringDeltaList[i].id,
+            name: _recurringDeltaList[i].name,
+            iconSrc: _recurringDeltaList[i].iconSrc,
+            deltaInterval: _recurringDeltaList[i].deltaInterval,
+            weighting: _recurringDeltaList[i].weighting,
+            remainingFrequency: _recurringDeltaList[i].remainingFrequency + 1,
+            minimumVolume: _recurringDeltaList[i].minimumVolume,
+            effectiveVolume: _recurringDeltaList[i].effectiveVolume,
+            optimalVolume: _recurringDeltaList[i].optimalVolume,
+            startDate: _recurringDeltaList[i].startDate,
+            completedToday: await DatabaseRecurringDeltaService().isCompletedToday(deltaId));
+        _recurringDeltaList[i] = newRecurringDelta;
+      }
+    }
+    notifyListeners();
+  }
+
+  void decrementFrequency(int deltaId) async {
+    for (var i = 0; i < _recurringDeltaList.length; i++) {
+      if (_recurringDeltaList[i].id == deltaId) {
+        RecurringDelta newRecurringDelta = RecurringDelta(
+            id: _recurringDeltaList[i].id,
+            name: _recurringDeltaList[i].name,
+            iconSrc: _recurringDeltaList[i].iconSrc,
+            deltaInterval: _recurringDeltaList[i].deltaInterval,
+            weighting: _recurringDeltaList[i].weighting,
+            remainingFrequency: _recurringDeltaList[i].remainingFrequency - 1,
+            minimumVolume: _recurringDeltaList[i].minimumVolume,
+            effectiveVolume: _recurringDeltaList[i].effectiveVolume,
+            optimalVolume: _recurringDeltaList[i].optimalVolume,
+            startDate: _recurringDeltaList[i].startDate,
+            completedToday: await DatabaseRecurringDeltaService().isCompletedToday(deltaId));
+        _recurringDeltaList[i] = newRecurringDelta;
+      }
+    }
     notifyListeners();
   }
 }

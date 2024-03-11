@@ -44,7 +44,7 @@ class DatabaseRecurringDeltaService {
           effectiveVolume: effectiveVolume,
           optimalVolume: optimalVolume,
           startDate: DateTime.parse(startDate),
-          completedToday: await _recurringDeltaIsCompleted(id),
+          completedToday: await recurringDeltaOptimalVolumeReached(id),
         ),
     ];
 
@@ -95,7 +95,7 @@ class DatabaseRecurringDeltaService {
           effectiveVolume: effectiveVolume,
           optimalVolume: optimalVolume,
           startDate: DateTime.parse(startDate),
-          completedToday: await _recurringDeltaIsCompleted(deltaId),
+          completedToday: await recurringDeltaOptimalVolumeReached(deltaId),
         ),
     ];
     return out[0];
@@ -179,19 +179,21 @@ class DatabaseRecurringDeltaService {
   //   return out[0];
   // }
 
-  // TODO: New ChangeNotifierProvider for completions
-  // - Keep track of remainingFrequency
-  // - insertNewCompletion will take in BuildContext -> Update ChangeNotifierProvider class
-  Future<void> insertNewCompletion(int deltaId) async {
+  Future<void> insertNewCompletion(int deltaId, BuildContext context) async {
     final db = await _databaseService.db;
     var now = DateTime.now();
     await db.rawInsert(
-      "INSERT INTO delta_progress (delta_id, completed_at)",
+      "INSERT INTO delta_progress (delta_id, completed_at) VALUES (?,?)",
       [deltaId, now.toIso8601String()],
     );
+
+    if (context.mounted) {
+      context.read<ListOfRecurringDeltas>().decrementFrequency(deltaId);
+    }
   }
 
-  Future<void> deleteMostRecentCompletion(int deltaId) async {
+  Future<void> deleteMostRecentCompletion(
+      int deltaId, BuildContext context) async {
     final db = await _databaseService.db;
     final list = await _getDeltaProgressSortedByRecentToOld(deltaId);
 
@@ -199,6 +201,24 @@ class DatabaseRecurringDeltaService {
 
     await db
         .delete("delta_progress", where: 'id = ?', whereArgs: [removedItem.id]);
+
+    if (context.mounted) {
+      context.read<ListOfRecurringDeltas>().incrementFrequency(deltaId);
+    }
+  }
+
+  Future<bool> isCompletedToday(int deltaId) async {
+    final list = await _getDeltaProgressSortedByRecentToOld(deltaId);
+
+    final now = DateTime.now();
+
+    for (var deltaProgress in list) {
+      DateTime deltaProgressCompletedAt = deltaProgress.completedAt;
+      if (DateUtils.isSameDay(deltaProgressCompletedAt, now)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // List: New -> Old
@@ -224,7 +244,8 @@ class DatabaseRecurringDeltaService {
   }
 
   Future<int> _getFrequencyForCurrentInterval(int deltaId) async {
-    final DeltaInterval interval = await _getRecurringDeltaIntervalById(deltaId);
+    final DeltaInterval interval =
+        await _getRecurringDeltaIntervalById(deltaId);
     final List<DeltaProgress> list =
         await _getDeltaProgressSortedByRecentToOld(deltaId);
     final DateTime cutoffDate = getCutoffDateOfDeltaInterval(interval);
@@ -246,7 +267,8 @@ class DatabaseRecurringDeltaService {
     return optimalVolume - count;
   }
 
-  Future<bool> _recurringDeltaIsCompleted(int deltaId) async {
+  Future<bool> recurringDeltaOptimalVolumeReached(int deltaId) async {
+    // Optimal Volume is Reached
     final int optimalVolume = await _getOptimalVolumeFromId(deltaId);
     final int count = await _getFrequencyForCurrentInterval(deltaId);
 
@@ -256,7 +278,8 @@ class DatabaseRecurringDeltaService {
     return false;
   }
 
-  Future<double> getRecurringDeltaSuccessRateFromRecurringDelta(RecurringDelta recurringDelta) async {
+  Future<double> getRecurringDeltaSuccessRateFromRecurringDelta(
+      RecurringDelta recurringDelta) async {
     final List<DeltaProgress> list =
         await _getDeltaProgressSortedByRecentToOld(recurringDelta.id);
 
@@ -265,8 +288,8 @@ class DatabaseRecurringDeltaService {
     // Value: Count
 
     for (final deltaProgress in list) {
-      DateTime beginning =
-          startOfDeltaInterval(recurringDelta.deltaInterval, deltaProgress.completedAt);
+      DateTime beginning = startOfDeltaInterval(
+          recurringDelta.deltaInterval, deltaProgress.completedAt);
       intervalCount.update(beginning, (value) => ++value, ifAbsent: () => 1);
     }
 
@@ -285,7 +308,8 @@ class DatabaseRecurringDeltaService {
     return (isCompleted / intervalCount.values.length) * 100;
   }
 
-  Future<int> getLongestStreakFromRecurringDelta(RecurringDelta recurringDelta) async {
+  Future<int> getLongestStreakFromRecurringDelta(
+      RecurringDelta recurringDelta) async {
     final List<DeltaProgress> list =
         await _getDeltaProgressSortedByRecentToOld(recurringDelta.id);
 
@@ -295,8 +319,8 @@ class DatabaseRecurringDeltaService {
     // SplayTreeMap -> Keys are sorted (Ascending)
 
     for (final deltaProgress in list) {
-      DateTime beginning =
-          startOfDeltaInterval(recurringDelta.deltaInterval, deltaProgress.completedAt);
+      DateTime beginning = startOfDeltaInterval(
+          recurringDelta.deltaInterval, deltaProgress.completedAt);
       intervalCount.update(beginning, (value) => ++value, ifAbsent: () => 1);
     }
 
@@ -358,7 +382,8 @@ class DatabaseRecurringDeltaService {
     return allTimeDelta * 100; // Percentage
   }
 
-  Future<double> getThisMonthDeltaPercentageFromRecurringDelta(RecurringDelta recurringDelta) async {
+  Future<double> getThisMonthDeltaPercentageFromRecurringDelta(
+      RecurringDelta recurringDelta) async {
     final List<DeltaProgress> list =
         await _getDeltaProgressSortedByRecentToOld(recurringDelta.id);
 
@@ -368,8 +393,8 @@ class DatabaseRecurringDeltaService {
     // SplayTreeMap -> Keys are sorted (Ascending)
 
     for (final deltaProgress in list) {
-      DateTime beginning =
-          startOfDeltaInterval(recurringDelta.deltaInterval, deltaProgress.completedAt);
+      DateTime beginning = startOfDeltaInterval(
+          recurringDelta.deltaInterval, deltaProgress.completedAt);
       intervalCount.update(beginning, (value) => ++value, ifAbsent: () => 1);
     }
 
@@ -383,8 +408,11 @@ class DatabaseRecurringDeltaService {
 
     for (final start in listOfStartOfIntervalDateTimes) {
       if (intervalCount.containsKey(start)) {
-        double delta = calculateDelta(intervalCount[start]!, recurringDelta.minimumVolume,
-            recurringDelta.effectiveVolume, recurringDelta.optimalVolume);
+        double delta = calculateDelta(
+            intervalCount[start]!,
+            recurringDelta.minimumVolume,
+            recurringDelta.effectiveVolume,
+            recurringDelta.optimalVolume);
         allTimeDelta += delta;
       } else {
         allTimeDelta -= 1;
