@@ -14,6 +14,7 @@ Future<String> getRandomPhrase() async {
   return data['phrases'][index];
 }
 
+//TODO  HAAA
 String getThisMonthDeltaPercentage() {
   Random random = Random();
   int percentageProgress = random.nextInt(35);

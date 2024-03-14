@@ -3,7 +3,7 @@ import 'package:neo_delta/models/stats.dart';
 import 'package:neo_delta/widgets/stats/progress_all_time.dart';
 import 'package:neo_delta/widgets/stats/stats_graph.dart';
 
-StatsData _statsData = StatsData.generateFakeData(12, 4, -7);
+StatsData _statsData = StatsData.generateFakeData(12, 4, -7); // TODO: IMPOSTER!!!
 
 class StatsPageViewAllTime extends StatefulWidget {
   const StatsPageViewAllTime({super.key});

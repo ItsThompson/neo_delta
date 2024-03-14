@@ -19,25 +19,26 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
   String name = "";
   DeltaInterval interval = DeltaInterval.day;
 
-  int minVol = 1, effectiveVol = 1, optimalVol = 1, weighting = 1;
+  int minVolume = 1, effectiveVolume = 1, optimalVolume = 1, weighting = 1;
 
   int maxMinVol = 99,
       maxEffectiveVol = 99,
       maxOptimalVol = 99,
       maxWeighting = 10;
 
-  bool showText = false;
+  bool showEmptyNameError = false;
+  bool showInvalidVolumeError = false;
 
   minVolCallback(value) {
-    minVol = value;
+    minVolume = value;
   }
 
   effectiveVolCallback(value) {
-    effectiveVol = value;
+    effectiveVolume = value;
   }
 
   optimalVolCallback(value) {
-    optimalVol = value;
+    optimalVolume = value;
   }
 
   weightingCallback(value) {
@@ -63,7 +64,8 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
                       decoration: InputDecoration(
                           border: const OutlineInputBorder(),
                           hintText: 'ENTER DELTA NAME:',
-                          helperText: showText ? "ENTER A DELTA NAME" : null,
+                          helperText:
+                              showEmptyNameError ? "ENTER A DELTA NAME" : null,
                           helperStyle:
                               TextStyle(color: mainTheme.colorScheme.tertiary)),
                       onChanged: (String value) async {
@@ -110,19 +112,19 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
                         ),
                       )),
                   IncrementDecrementButton(
-                      value: minVol,
+                      value: minVolume,
                       minValue: 0,
                       maxValue: maxMinVol,
                       labelFormat: "MINIMUM VOLUME: {}",
                       callBack: minVolCallback),
                   IncrementDecrementButton(
-                      value: effectiveVol,
+                      value: effectiveVolume,
                       minValue: 0,
                       maxValue: maxEffectiveVol,
                       labelFormat: "EFFECTIVE VOLUME: {}",
                       callBack: effectiveVolCallback),
                   IncrementDecrementButton(
-                      value: optimalVol,
+                      value: optimalVolume,
                       minValue: 0,
                       maxValue: maxOptimalVol,
                       labelFormat: "OPTIMAL VOLUME: {}",
@@ -132,7 +134,9 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
                       minValue: 0,
                       maxValue: maxWeighting,
                       labelFormat: "WEIGHTING: {} / $maxWeighting",
-                      callBack: weightingCallback)
+                      callBack: weightingCallback),
+                  Text(showInvalidVolumeError ? "ENTER A VALID VOLUME" : "",
+                      style: TextStyle(color: mainTheme.colorScheme.tertiary))
                 ]),
           )),
       floatingActionButton: TextButton(
@@ -142,9 +146,18 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
         onPressed: () {
           if (nameIsEmpty) {
             setState(() {
-              showText = true;
+              showEmptyNameError = true;
+            });
+          } else if (!((minVolume <= effectiveVolume) &&
+              (effectiveVolume <= optimalVolume))) {
+            setState(() {
+              showInvalidVolumeError = true;
             });
           } else {
+            // Has name
+            // and
+            // minVolume <= effectiveVolume <= optimalVolume
+
             RecurringDelta newRecurringDelta = RecurringDelta(
                 id: 0, // Not needed
                 name: name,
@@ -152,15 +165,15 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
                     "assets/landmark.png", // NOTE: smart icon selection (tag system?)
                 deltaInterval: interval,
                 weighting: weighting,
-                remainingFrequency: optimalVol, // Not needed
-                minimumVolume: minVol,
-                effectiveVolume: effectiveVol,
-                optimalVolume: optimalVol,
+                remainingVolume: optimalVolume, // Not needed
+                minimumVolume: minVolume,
+                effectiveVolume: effectiveVolume,
+                optimalVolume: optimalVolume,
                 startDate: DateTime.now(),
                 completedToday: false);
 
-            DatabaseRecurringDeltaService().insertNewRecurringDelta(
-                newRecurringDelta);
+            DatabaseRecurringDeltaService()
+                .insertNewRecurringDelta(newRecurringDelta);
 
             context.read<ListOfRecurringDeltas>().addToList(newRecurringDelta);
             context.pop();

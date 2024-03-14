@@ -6,7 +6,7 @@ class IncrementDecrementButton extends StatefulWidget {
   final int value;
   final int minValue;
   final int maxValue;
-  final String labelFormat; // i.e. FREQUENCY: {} PER DAY
+  final String labelFormat; // i.e. VOLUME: {} PER DAY
   final Function callBack;
   const IncrementDecrementButton(
       {super.key, required this.value, required this.minValue, required this.maxValue, required this.labelFormat, required this.callBack});
@@ -40,7 +40,7 @@ class _IncrementDecrementButtonState extends State<IncrementDecrementButton> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-        // "FREQUENCY: $value PER DAY"
+        // "VOLUME: $value PER DAY"
         format(widget.labelFormat, value)
         , style: const TextStyle(fontSize: 18)),
         Row(

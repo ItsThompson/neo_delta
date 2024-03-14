@@ -4,7 +4,7 @@ import 'package:neo_delta/widgets/stats/progress_weekly.dart';
 import 'package:neo_delta/widgets/stats/stats_graph.dart';
 
 // NOTE: Default: Weeks start on MON
-StatsData _statsData = StatsData.generateFakeData(7, 3, -3);
+StatsData _statsData = StatsData.generateFakeData(5, 3, -3); // TODO: IMPOSTER!!!
 
 class StatsPageViewWeek extends StatefulWidget {
   const StatsPageViewWeek({super.key});

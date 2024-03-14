@@ -3,7 +3,7 @@ import 'package:neo_delta/models/stats.dart';
 import 'package:neo_delta/widgets/stats/progress_monthly.dart';
 import 'package:neo_delta/widgets/stats/stats_graph.dart';
 
-StatsData _statsData = StatsData.generateFakeData(20, 5, -5);
+StatsData _statsData = StatsData.generateFakeData(20, 5, -5); // TODO: IMPOSTER!!!
 
 class StatsPageViewMonth extends StatefulWidget {
   const StatsPageViewMonth({super.key});

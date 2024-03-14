@@ -71,11 +71,11 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
       builder: (context, value, child) {
         RecurringDelta recurringDelta =
             value.getRecurringDelta(widget.deltaId)!;
-        int remainingFrequency = recurringDelta.remainingFrequency;
+        int remainingVolume = recurringDelta.remainingVolume;
         bool isComplete = recurringDelta.completedToday;
 
         bool canIncrement() {
-          return remainingFrequency + 1 <= recurringDelta.optimalVolume;
+          return remainingVolume + 1 <= recurringDelta.optimalVolume;
         }
 
         void incrementRemaining() {
@@ -200,14 +200,14 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                     border: Border.all(
                       width: 5,
                       color: isComplete
-                          ? remainingFrequency >= 0
+                          ? remainingVolume >= 0
                               ? mainTheme.colorScheme.primary
                               : mainTheme.colorScheme.inversePrimary
                           : Colors.transparent,
                     ),
-                    color: remainingFrequency == 0
+                    color: remainingVolume == 0
                         ? mainTheme.colorScheme.primary
-                        : remainingFrequency >= 0
+                        : remainingVolume >= 0
                             ? mainTheme.colorScheme.surface
                             : mainTheme.colorScheme.inversePrimary,
                     borderRadius: const BorderRadius.all(Radius.circular(5)),
@@ -222,11 +222,11 @@ class _RecurringDeltaButtonState extends State<RecurringDeltaButton> {
                         child: Image.asset(recurringDelta.iconSrc),
                       ),
                       Text(
-                        remainingFrequency == 0
+                        remainingVolume == 0
                             ? "ALL DONE!"
-                            : remainingFrequency >= 0
-                                ? "$remainingFrequency LEFT ${getDeltaIntervalCurrentString(recurringDelta.deltaInterval)}"
-                                : "ALL DONE! (+${-remainingFrequency})",
+                            : remainingVolume >= 0
+                                ? "$remainingVolume LEFT ${deltaIntervalCurrentString(recurringDelta.deltaInterval)}"
+                                : "ALL DONE! (+${-remainingVolume})",
                         style: const TextStyle(fontSize: 10),
                       )
                     ],

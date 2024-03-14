@@ -11,21 +11,34 @@ class DeltaProgress {
 
 double calculateDelta(
     int volume, int minimumVolume, int effectiveVolume, int optimalVolume) {
-  // See: https://www.desmos.com/calculator/t57he69cvo
-  if (0 <= volume && volume < minimumVolume) {
-    return sin((pi * volume) / (2 * minimumVolume)) - 1;
+  // Calculates delta for volume in interval.
+  // NOTE  Assume that: minVolume <= effectiveVolume <= optimalVolume
+
+  // NOTE  Deprecated Model(For Historical Record Only): https://www.desmos.com/calculator/tliclulinp
+  // NOTE  Current Model: https://www.desmos.com/calculator/ejucssx4oc
+
+  int base = max((optimalVolume - effectiveVolume), optimalVolume);
+  int exponent = -((volume - optimalVolume).abs());
+
+  if (volume <= 0) {
+    return -1;
+  }
+
+  if (0 < volume && volume < minimumVolume) {
+    return log(volume / minimumVolume);
   }
 
   if (minimumVolume <= volume && volume < effectiveVolume) {
     return 0;
   }
 
-  if (effectiveVolume <= volume &&
-      volume < (3 * optimalVolume - 2 * effectiveVolume)) {
-    return sin(pi *
-        (volume - effectiveVolume) /
-        (2 * (optimalVolume - effectiveVolume)));
+  if (effectiveVolume <= volume && volume < optimalVolume) {
+    return pow(base, exponent).toDouble();
   }
 
-  return 0;
+  if (optimalVolume <= volume) {
+    return 2 * pow(base, exponent).toDouble() - 1;
+  }
+
+  return -1;
 }

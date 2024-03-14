@@ -38,8 +38,7 @@ class DatabaseRecurringDeltaService {
           iconSrc: iconSrc,
           deltaInterval: parseStringToDeltaInterval(deltaInterval),
           weighting: weighting,
-          remainingFrequency:
-              await _calculateRemainingFrequencyForRecurringDelta(id),
+          remainingVolume: await calculateRemainingVolumeForRecurringDelta(id),
           minimumVolume: minimumVolume,
           effectiveVolume: effectiveVolume,
           optimalVolume: optimalVolume,
@@ -56,14 +55,16 @@ class DatabaseRecurringDeltaService {
   }
 
   Future<RecurringDelta> getRecurringDeltaById(
-      int deltaId, BuildContext context) async {
-    List<RecurringDelta> providerRecurringDeltaList =
-        context.read<ListOfRecurringDeltas>().recurringDeltaList;
+      int deltaId, BuildContext? context) async {
+    if (context != null) {
+      List<RecurringDelta> providerRecurringDeltaList =
+          context.read<ListOfRecurringDeltas>().recurringDeltaList;
 
-    if (providerRecurringDeltaList.isNotEmpty) {
-      for (var recurringDelta in providerRecurringDeltaList) {
-        if (recurringDelta.id == deltaId) {
-          return recurringDelta;
+      if (providerRecurringDeltaList.isNotEmpty) {
+        for (var recurringDelta in providerRecurringDeltaList) {
+          if (recurringDelta.id == deltaId) {
+            return recurringDelta;
+          }
         }
       }
     }
@@ -89,8 +90,8 @@ class DatabaseRecurringDeltaService {
           iconSrc: iconSrc,
           deltaInterval: parseStringToDeltaInterval(deltaInterval),
           weighting: weighting,
-          remainingFrequency:
-              await _calculateRemainingFrequencyForRecurringDelta(deltaId),
+          remainingVolume:
+              await calculateRemainingVolumeForRecurringDelta(deltaId),
           minimumVolume: minimumVolume,
           effectiveVolume: effectiveVolume,
           optimalVolume: optimalVolume,
@@ -101,7 +102,21 @@ class DatabaseRecurringDeltaService {
     return out[0];
   }
 
-  Future<DeltaInterval> _getRecurringDeltaIntervalById(int deltaId) async {
+  Future<DeltaInterval> getRecurringDeltaIntervalById(
+      int deltaId, BuildContext? context) async {
+    if (context != null) {
+      List<RecurringDelta> providerRecurringDeltaList =
+          context.read<ListOfRecurringDeltas>().recurringDeltaList;
+
+      if (providerRecurringDeltaList.isNotEmpty) {
+        for (var recurringDelta in providerRecurringDeltaList) {
+          if (recurringDelta.id == deltaId) {
+            return recurringDelta.deltaInterval;
+          }
+        }
+      }
+    }
+
     final db = await _databaseService.db;
     var data = await db.query("recurring_delta",
         columns: ['interval'], where: "id = ?", whereArgs: [deltaId]);
@@ -114,33 +129,73 @@ class DatabaseRecurringDeltaService {
     return out[0];
   }
 
-  // Future<int> _getMinimumVolumeFromId(int deltaId) async {
-  //   final db = await _databaseService.db;
-  //   var data = await db.query("recurring_delta",
-  //       columns: ['minimum_volume'], where: "id = ?", whereArgs: [deltaId]);
-  //   var out = [
-  //     for (final {
-  //           'minimum_volume': minimumVolume as int,
-  //         } in data)
-  //       minimumVolume
-  //   ];
-  //   return out[0];
-  // }
-  //
-  // Future<int> _getEffectiveVolumeFromId(int deltaId) async {
-  //   final db = await _databaseService.db;
-  //   var data = await db.query("recurring_delta",
-  //       columns: ['effective_volume'], where: "id = ?", whereArgs: [deltaId]);
-  //   var out = [
-  //     for (final {
-  //           'effective_volume': effectiveVolume as int,
-  //         } in data)
-  //       effectiveVolume
-  //   ];
-  //   return out[0];
-  // }
+  Future<int> getMinimumVolumeFromId(int deltaId, BuildContext? context) async {
+    if (context != null) {
+      List<RecurringDelta> providerRecurringDeltaList =
+          context.read<ListOfRecurringDeltas>().recurringDeltaList;
 
-  Future<int> _getOptimalVolumeFromId(int deltaId) async {
+      if (providerRecurringDeltaList.isNotEmpty) {
+        for (var recurringDelta in providerRecurringDeltaList) {
+          if (recurringDelta.id == deltaId) {
+            return recurringDelta.minimumVolume;
+          }
+        }
+      }
+    }
+
+    final db = await _databaseService.db;
+    var data = await db.query("recurring_delta",
+        columns: ['minimum_volume'], where: "id = ?", whereArgs: [deltaId]);
+    var out = [
+      for (final {
+            'minimum_volume': minimumVolume as int,
+          } in data)
+        minimumVolume
+    ];
+    return out[0];
+  }
+
+  Future<int> getEffectiveVolumeFromId(
+      int deltaId, BuildContext? context) async {
+    if (context != null) {
+      List<RecurringDelta> providerRecurringDeltaList =
+          context.read<ListOfRecurringDeltas>().recurringDeltaList;
+
+      if (providerRecurringDeltaList.isNotEmpty) {
+        for (var recurringDelta in providerRecurringDeltaList) {
+          if (recurringDelta.id == deltaId) {
+            return recurringDelta.effectiveVolume;
+          }
+        }
+      }
+    }
+
+    final db = await _databaseService.db;
+    var data = await db.query("recurring_delta",
+        columns: ['effective_volume'], where: "id = ?", whereArgs: [deltaId]);
+    var out = [
+      for (final {
+            'effective_volume': effectiveVolume as int,
+          } in data)
+        effectiveVolume
+    ];
+    return out[0];
+  }
+
+  Future<int> getOptimalVolumeFromId(int deltaId, BuildContext? context) async {
+    if (context != null) {
+      List<RecurringDelta> providerRecurringDeltaList =
+          context.read<ListOfRecurringDeltas>().recurringDeltaList;
+
+      if (providerRecurringDeltaList.isNotEmpty) {
+        for (var recurringDelta in providerRecurringDeltaList) {
+          if (recurringDelta.id == deltaId) {
+            return recurringDelta.optimalVolume;
+          }
+        }
+      }
+    }
+
     final db = await _databaseService.db;
     var data = await db.query("recurring_delta",
         columns: ['optimal_volume'], where: "id = ?", whereArgs: [deltaId]);
@@ -153,31 +208,58 @@ class DatabaseRecurringDeltaService {
     return out[0];
   }
 
-  // Future<int> getWeightingFromId(int deltaId) async {
-  //   final db = await _databaseService.db;
-  //   var data = await db.query("recurring_delta",
-  //       columns: ['weighting'], where: "id = ?", whereArgs: [deltaId]);
-  //   var out = [
-  //     for (final {
-  //           'weighting': weighting as int,
-  //         } in data)
-  //       weighting
-  //   ];
-  //   return out[0];
-  // }
+  Future<int> getWeightingFromId(int deltaId, BuildContext? context) async {
+    if (context != null) {
+      List<RecurringDelta> providerRecurringDeltaList =
+          context.read<ListOfRecurringDeltas>().recurringDeltaList;
 
-  // Future<DateTime> getStartDateFromId(int deltaId) async {
-  //   final db = await _databaseService.db;
-  //   var data = await db.query("recurring_delta",
-  //       columns: ['start_date'], where: "id = ?", whereArgs: [deltaId]);
-  //   var out = [
-  //     for (final {
-  //           'start_date': startDate as String,
-  //         } in data)
-  //       DateTime.parse(startDate),
-  //   ];
-  //   return out[0];
-  // }
+      if (providerRecurringDeltaList.isNotEmpty) {
+        for (var recurringDelta in providerRecurringDeltaList) {
+          if (recurringDelta.id == deltaId) {
+            return recurringDelta.weighting;
+          }
+        }
+      }
+    }
+
+    final db = await _databaseService.db;
+    var data = await db.query("recurring_delta",
+        columns: ['weighting'], where: "id = ?", whereArgs: [deltaId]);
+    var out = [
+      for (final {
+            'weighting': weighting as int,
+          } in data)
+        weighting
+    ];
+    return out[0];
+  }
+
+  Future<DateTime> getStartDateFromId(
+      int deltaId, BuildContext? context) async {
+    if (context != null) {
+      List<RecurringDelta> providerRecurringDeltaList =
+          context.read<ListOfRecurringDeltas>().recurringDeltaList;
+
+      if (providerRecurringDeltaList.isNotEmpty) {
+        for (var recurringDelta in providerRecurringDeltaList) {
+          if (recurringDelta.id == deltaId) {
+            return recurringDelta.startDate;
+          }
+        }
+      }
+    }
+
+    final db = await _databaseService.db;
+    var data = await db.query("recurring_delta",
+        columns: ['start_date'], where: "id = ?", whereArgs: [deltaId]);
+    var out = [
+      for (final {
+            'start_date': startDate as String,
+          } in data)
+        DateTime.parse(startDate),
+    ];
+    return out[0];
+  }
 
   Future<void> insertNewCompletion(int deltaId, BuildContext context) async {
     final db = await _databaseService.db;
@@ -188,14 +270,14 @@ class DatabaseRecurringDeltaService {
     );
 
     if (context.mounted) {
-      context.read<ListOfRecurringDeltas>().decrementFrequency(deltaId);
+      context.read<ListOfRecurringDeltas>().decrementVolume(deltaId);
     }
   }
 
   Future<void> deleteMostRecentCompletion(
       int deltaId, BuildContext context) async {
     final db = await _databaseService.db;
-    final list = await _getDeltaProgressSortedByRecentToOld(deltaId);
+    final list = await getDeltaProgressSortedByRecentToOld(deltaId);
 
     DeltaProgress removedItem = list[0]; // Takes most recent progress item
 
@@ -203,12 +285,12 @@ class DatabaseRecurringDeltaService {
         .delete("delta_progress", where: 'id = ?', whereArgs: [removedItem.id]);
 
     if (context.mounted) {
-      context.read<ListOfRecurringDeltas>().incrementFrequency(deltaId);
+      context.read<ListOfRecurringDeltas>().incrementVolume(deltaId);
     }
   }
 
   Future<bool> isCompletedToday(int deltaId) async {
-    final list = await _getDeltaProgressSortedByRecentToOld(deltaId);
+    final list = await getDeltaProgressSortedByRecentToOld(deltaId);
 
     final now = DateTime.now();
 
@@ -222,7 +304,7 @@ class DatabaseRecurringDeltaService {
   }
 
   // List: New -> Old
-  Future<List<DeltaProgress>> _getDeltaProgressSortedByRecentToOld(
+  Future<List<DeltaProgress>> getDeltaProgressSortedByRecentToOld(
       int deltaId) async {
     final db = await _databaseService.db;
 
@@ -243,16 +325,20 @@ class DatabaseRecurringDeltaService {
     return list;
   }
 
-  Future<int> _getFrequencyForCurrentInterval(int deltaId) async {
-    final DeltaInterval interval =
-        await _getRecurringDeltaIntervalById(deltaId);
+  Future<int> getVolumeForToday(int deltaId) async {
     final List<DeltaProgress> list =
-        await _getDeltaProgressSortedByRecentToOld(deltaId);
-    final DateTime cutoffDate = getCutoffDateOfDeltaInterval(interval);
+        await getDeltaProgressSortedByRecentToOld(deltaId);
+
+    DateTime now = DateTime.now();
+    DateTime todayDate = DateTime(now.year, now.month, now.day);
 
     int count = 0;
     for (final deltaProgress in list) {
-      if (cutoffDate.isBefore(deltaProgress.completedAt)) {
+      DateTime dateOfDeltaProgressCompletion = DateTime(
+          deltaProgress.completedAt.year,
+          deltaProgress.completedAt.month,
+          deltaProgress.completedAt.day);
+      if (dateOfDeltaProgressCompletion.isAtSameMomentAs(todayDate)) {
         count += 1;
       }
     }
@@ -260,17 +346,58 @@ class DatabaseRecurringDeltaService {
     return count;
   }
 
-  Future<int> _calculateRemainingFrequencyForRecurringDelta(int deltaId) async {
-    final int optimalVolume = await _getOptimalVolumeFromId(deltaId);
-    final int count = await _getFrequencyForCurrentInterval(deltaId);
+  Future<int> getVolumeInIntervalWithStartDate(
+      int deltaId, DateTime startDate, BuildContext? context) async {
+    final DeltaInterval interval =
+        await getRecurringDeltaIntervalById(deltaId, context);
+    final DateTime endOfIntervalDate = endOfDeltaInterval(interval, startDate);
+
+    final List<DeltaProgress> list =
+        await getDeltaProgressSortedByRecentToOld(deltaId);
+
+    int count = 0;
+
+    for (final deltaProgress in list) {
+      // startDate <= deltaProgress.completedAt <= endOfIntervalDate
+      if ((startDate.isBefore(deltaProgress.completedAt) ||
+              startDate.isAtSameMomentAs(deltaProgress.completedAt)) &&
+          (endOfIntervalDate.isAfter(deltaProgress.completedAt) ||
+              endOfIntervalDate.isAtSameMomentAs(deltaProgress.completedAt))) {
+        count += 1;
+      }
+    }
+
+    return count;
+  }
+
+  Future<int> getVolumeForCurrentInterval(int deltaId) async {
+    final DeltaInterval interval =
+        await getRecurringDeltaIntervalById(deltaId, null);
+    final List<DeltaProgress> list =
+        await getDeltaProgressSortedByRecentToOld(deltaId);
+    final DateTime cutOffDate = endOfCurrentInterval(interval);
+
+    int count = 0;
+    for (final deltaProgress in list) {
+      if (cutOffDate.isBefore(deltaProgress.completedAt)) {
+        count += 1;
+      }
+    }
+
+    return count;
+  }
+
+  Future<int> calculateRemainingVolumeForRecurringDelta(int deltaId) async {
+    final int optimalVolume = await getOptimalVolumeFromId(deltaId, null);
+    final int count = await getVolumeForCurrentInterval(deltaId);
 
     return optimalVolume - count;
   }
 
   Future<bool> recurringDeltaOptimalVolumeReached(int deltaId) async {
     // Optimal Volume is Reached
-    final int optimalVolume = await _getOptimalVolumeFromId(deltaId);
-    final int count = await _getFrequencyForCurrentInterval(deltaId);
+    final int optimalVolume = await getOptimalVolumeFromId(deltaId, null);
+    final int count = await getVolumeForCurrentInterval(deltaId);
 
     if (count >= optimalVolume) {
       return true;
@@ -281,7 +408,7 @@ class DatabaseRecurringDeltaService {
   Future<double> getRecurringDeltaSuccessRateFromRecurringDelta(
       RecurringDelta recurringDelta) async {
     final List<DeltaProgress> list =
-        await _getDeltaProgressSortedByRecentToOld(recurringDelta.id);
+        await getDeltaProgressSortedByRecentToOld(recurringDelta.id);
 
     Map<DateTime, int> intervalCount = HashMap<DateTime, int>();
     // Key: Starting DateTime Interval,
@@ -311,7 +438,7 @@ class DatabaseRecurringDeltaService {
   Future<int> getLongestStreakFromRecurringDelta(
       RecurringDelta recurringDelta) async {
     final List<DeltaProgress> list =
-        await _getDeltaProgressSortedByRecentToOld(recurringDelta.id);
+        await getDeltaProgressSortedByRecentToOld(recurringDelta.id);
 
     SplayTreeMap<DateTime, int> intervalCount = SplayTreeMap<DateTime, int>();
     // Key: Starting DateTime Interval,
@@ -351,7 +478,7 @@ class DatabaseRecurringDeltaService {
     final DeltaInterval interval = recurringDelta.deltaInterval;
     final DateTime startDate = recurringDelta.startDate;
     final List<DeltaProgress> list =
-        await _getDeltaProgressSortedByRecentToOld(recurringDelta.id);
+        await getDeltaProgressSortedByRecentToOld(recurringDelta.id);
 
     SplayTreeMap<DateTime, int> intervalCount = SplayTreeMap<DateTime, int>();
     // Key: Starting DateTime Interval,
@@ -366,7 +493,7 @@ class DatabaseRecurringDeltaService {
 
     // List of every startOfInterval since startDate til today.
     List<DateTime> listOfStartOfIntervalDateTimes =
-        getStartOfIntervalDateTimesSinceDate(interval, startDate);
+        deltaIntervalStartDateFromDate(interval, startDate);
 
     double allTimeDelta = 0;
 
@@ -385,7 +512,7 @@ class DatabaseRecurringDeltaService {
   Future<double> getThisMonthDeltaPercentageFromRecurringDelta(
       RecurringDelta recurringDelta) async {
     final List<DeltaProgress> list =
-        await _getDeltaProgressSortedByRecentToOld(recurringDelta.id);
+        await getDeltaProgressSortedByRecentToOld(recurringDelta.id);
 
     SplayTreeMap<DateTime, int> intervalCount = SplayTreeMap<DateTime, int>();
     // Key: Starting DateTime Interval,
@@ -401,7 +528,7 @@ class DatabaseRecurringDeltaService {
     // List of every startOfInterval since startDate til today.
     DateTime now = DateTime.now();
     List<DateTime> listOfStartOfIntervalDateTimes =
-        getStartOfIntervalDateTimesSinceDate(
+        deltaIntervalStartDateFromDate(
             recurringDelta.deltaInterval, DateTime(now.year, now.month, 1));
 
     double allTimeDelta = 0;

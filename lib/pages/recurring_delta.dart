@@ -143,19 +143,19 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                                         const Text("Delta Profile",
                                             style: TextStyle(fontSize: 16)),
                                         Text(
-                                            "${getDeltaIntervalAdverbString(recurringDeltaPageData.interval)} TASK",
+                                            "${deltaIntervalAdverbString(recurringDeltaPageData.interval)} TASK",
                                             style:
                                                 const TextStyle(fontSize: 12)),
                                         Text(
-                                            "MV: ${recurringDeltaPageData.minimumVolume} ${recurringDeltaPageData.minimumVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(recurringDeltaPageData.interval)}",
+                                            "MV: ${recurringDeltaPageData.minimumVolume} ${recurringDeltaPageData.minimumVolume == 1 ? "TIME" : "TIMES"} / ${deltaIntervalPeriodString(recurringDeltaPageData.interval)}",
                                             style:
                                                 const TextStyle(fontSize: 12)),
                                         Text(
-                                            "EV: ${recurringDeltaPageData.effectiveVolume} ${recurringDeltaPageData.effectiveVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(recurringDeltaPageData.interval)}",
+                                            "EV: ${recurringDeltaPageData.effectiveVolume} ${recurringDeltaPageData.effectiveVolume == 1 ? "TIME" : "TIMES"} / ${deltaIntervalPeriodString(recurringDeltaPageData.interval)}",
                                             style:
                                                 const TextStyle(fontSize: 12)),
                                         Text(
-                                            "OV: ${recurringDeltaPageData.optimalVolume} ${recurringDeltaPageData.optimalVolume == 1 ? "TIME" : "TIMES"} / ${getDeltaIntervalPeriodString(recurringDeltaPageData.interval)}",
+                                            "OV: ${recurringDeltaPageData.optimalVolume} ${recurringDeltaPageData.optimalVolume == 1 ? "TIME" : "TIMES"} / ${deltaIntervalPeriodString(recurringDeltaPageData.interval)}",
                                             style:
                                                 const TextStyle(fontSize: 12)),
                                         Text(

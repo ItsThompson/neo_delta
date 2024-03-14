@@ -80,7 +80,7 @@ class _MyWidgetState extends State<MonthlyProgress> {
     Color color = mainTheme.colorScheme.inverseSurface.withOpacity(0.5);
 
     if (index >= widget.statsData.progress.length) {
-      return internalBoxGenerator(color, null);
+      return internalBoxGenerator(color, null); // No Data (i.e. date is after today)
     }
 
     String text;

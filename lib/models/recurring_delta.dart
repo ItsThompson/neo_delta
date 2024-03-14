@@ -12,7 +12,7 @@ class RecurringDelta {
   final String iconSrc;
   final DeltaInterval deltaInterval;
   final int weighting;
-  final int remainingFrequency; // Remaining Frequency until Optimal Volume
+  final int remainingVolume; // Remaining Volume until Optimal Volume
   final int minimumVolume;
   final int effectiveVolume;
   final int optimalVolume;
@@ -24,7 +24,7 @@ class RecurringDelta {
       required this.iconSrc,
       required this.deltaInterval,
       required this.weighting,
-      required this.remainingFrequency,
+      required this.remainingVolume,
       required this.minimumVolume,
       required this.effectiveVolume,
       required this.optimalVolume,
@@ -32,7 +32,7 @@ class RecurringDelta {
       required this.completedToday});
 }
 
-String getDeltaIntervalCurrentString(DeltaInterval interval) {
+String deltaIntervalCurrentString(DeltaInterval interval) {
   switch (interval) {
     case DeltaInterval.day:
       return "TODAY";
@@ -43,7 +43,7 @@ String getDeltaIntervalCurrentString(DeltaInterval interval) {
   }
 }
 
-String getDeltaIntervalAdverbString(DeltaInterval interval) {
+String deltaIntervalAdverbString(DeltaInterval interval) {
   switch (interval) {
     case DeltaInterval.day:
       return "DAILY";
@@ -54,7 +54,7 @@ String getDeltaIntervalAdverbString(DeltaInterval interval) {
   }
 }
 
-String getDeltaIntervalPeriodString(DeltaInterval interval) {
+String deltaIntervalPeriodString(DeltaInterval interval) {
   switch (interval) {
     case DeltaInterval.day:
       return "DAY";
@@ -79,18 +79,38 @@ DeltaInterval parseStringToDeltaInterval(String deltaIntervalString) {
   }
 }
 
-DateTime getCutoffDateOfDeltaInterval(DeltaInterval interval) {
+DateTime endOfCurrentInterval(DeltaInterval interval) {
   DateTime now = DateTime.now();
 
+  return startOfDeltaInterval(interval, now);
+}
+
+DateTime endOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
   switch (interval) {
     case DeltaInterval.day:
-      return DateTime(now.year, now.month, now.day);
+      return DateTime(dateTime.year, dateTime.month, dateTime.day + 1)
+          .subtract(const Duration(seconds: 1));
     case DeltaInterval.week:
-      DateTime monday = now.subtract(Duration(days: now.weekday - 1));
-      return DateTime(monday.year, monday.month, monday.day);
+      DateTime monday = dateTime.subtract(Duration(days: dateTime.weekday - 1));
+      DateTime startOfMonday = DateTime(monday.year, monday.month, monday.day);
+      return startOfMonday
+          .add(const Duration(days: 7))
+          .subtract(const Duration(seconds: 1));
     case DeltaInterval.month:
-      return DateTime(now.year, now.month, 1);
+      DateTime beginningOfFirstDayOfMonth =
+          DateTime(dateTime.year, dateTime.month, 1);
+      return DateTime(
+              beginningOfFirstDayOfMonth.year,
+              beginningOfFirstDayOfMonth.month + 1,
+              beginningOfFirstDayOfMonth.day)
+          .subtract(const Duration(seconds: 1));
   }
+}
+
+DateTime startOfCurrentInterval(DeltaInterval interval) {
+  DateTime now = DateTime.now();
+
+  return startOfDeltaInterval(interval, now);
 }
 
 DateTime startOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
@@ -105,14 +125,16 @@ DateTime startOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
   }
 }
 
-List<DateTime> getStartOfIntervalDateTimesSinceDate(
+List<DateTime> deltaIntervalStartDateFromDate(
     DeltaInterval interval, DateTime date) {
+  // Get the start DateTime of each DeltaInterval from date til now.
   List<DateTime> list = [];
   DateTime now = DateTime.now();
 
   DateTime nextDate = startOfDeltaInterval(interval, date);
 
   if (interval == DeltaInterval.month) {
+    // while nextDate <= endDate
     while (nextDate.isBefore(now) ||
         nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
       list.add(nextDate);
@@ -132,6 +154,7 @@ List<DateTime> getStartOfIntervalDateTimesSinceDate(
       break;
   }
 
+  // while nextDate <= endDate
   while (nextDate.isBefore(now) ||
       nextDate.isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
     list.add(nextDate);
@@ -140,33 +163,33 @@ List<DateTime> getStartOfIntervalDateTimesSinceDate(
   return list;
 }
 
-// List<DateTime> rangeOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
-//   switch (interval) {
-//     case DeltaInterval.day:
-//       DateTime startOfDay =
-//           DateTime(dateTime.year, dateTime.month, dateTime.day);
-//       DateTime endOfDay =
-//           DateTime(dateTime.year, dateTime.month, dateTime.day + 1)
-//               .subtract(const Duration(seconds: 1));
-//       return <DateTime>[startOfDay, endOfDay];
-//     case DeltaInterval.week:
-//       DateTime monday = dateTime.subtract(Duration(days: dateTime.weekday - 1));
-//       DateTime startOfMonday = DateTime(monday.year, monday.month, monday.day);
-//       DateTime endOfSunday = startOfMonday
-//           .add(const Duration(days: 7))
-//           .subtract(const Duration(seconds: 1));
-//       return <DateTime>[startOfMonday, endOfSunday];
-//     case DeltaInterval.month:
-//       DateTime beginningOfFirstDayOfMonth =
-//           DateTime(dateTime.year, dateTime.month, 1);
-//       DateTime endOfLastDayOfMonth = DateTime(
-//               beginningOfFirstDayOfMonth.year,
-//               beginningOfFirstDayOfMonth.month + 1,
-//               beginningOfFirstDayOfMonth.day)
-//           .subtract(const Duration(seconds: 1));
-//       return <DateTime>[beginningOfFirstDayOfMonth, endOfLastDayOfMonth];
-//   }
-// }
+(DateTime, DateTime) rangeOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
+  switch (interval) {
+    case DeltaInterval.day:
+      DateTime startOfDay =
+          DateTime(dateTime.year, dateTime.month, dateTime.day);
+      DateTime endOfDay =
+          DateTime(dateTime.year, dateTime.month, dateTime.day + 1)
+              .subtract(const Duration(seconds: 1));
+      return (startOfDay, endOfDay);
+    case DeltaInterval.week:
+      DateTime monday = dateTime.subtract(Duration(days: dateTime.weekday - 1));
+      DateTime startOfMonday = DateTime(monday.year, monday.month, monday.day);
+      DateTime endOfSunday = startOfMonday
+          .add(const Duration(days: 7))
+          .subtract(const Duration(seconds: 1));
+      return (startOfMonday, endOfSunday);
+    case DeltaInterval.month:
+      DateTime beginningOfFirstDayOfMonth =
+          DateTime(dateTime.year, dateTime.month, 1);
+      DateTime endOfLastDayOfMonth = DateTime(
+              beginningOfFirstDayOfMonth.year,
+              beginningOfFirstDayOfMonth.month + 1,
+              beginningOfFirstDayOfMonth.day)
+          .subtract(const Duration(seconds: 1));
+      return (beginningOfFirstDayOfMonth, endOfLastDayOfMonth);
+  }
+}
 
 class ListOfRecurringDeltas extends ChangeNotifier {
   List<RecurringDelta> _recurringDeltaList = [];
@@ -193,7 +216,7 @@ class ListOfRecurringDeltas extends ChangeNotifier {
     notifyListeners();
   }
 
-  void incrementFrequency(int deltaId) async {
+  void incrementVolume(int deltaId) async {
     for (var i = 0; i < _recurringDeltaList.length; i++) {
       if (_recurringDeltaList[i].id == deltaId) {
         RecurringDelta newRecurringDelta = RecurringDelta(
@@ -202,19 +225,20 @@ class ListOfRecurringDeltas extends ChangeNotifier {
             iconSrc: _recurringDeltaList[i].iconSrc,
             deltaInterval: _recurringDeltaList[i].deltaInterval,
             weighting: _recurringDeltaList[i].weighting,
-            remainingFrequency: _recurringDeltaList[i].remainingFrequency + 1,
+            remainingVolume: _recurringDeltaList[i].remainingVolume + 1,
             minimumVolume: _recurringDeltaList[i].minimumVolume,
             effectiveVolume: _recurringDeltaList[i].effectiveVolume,
             optimalVolume: _recurringDeltaList[i].optimalVolume,
             startDate: _recurringDeltaList[i].startDate,
-            completedToday: await DatabaseRecurringDeltaService().isCompletedToday(deltaId));
+            completedToday: await DatabaseRecurringDeltaService()
+                .isCompletedToday(deltaId));
         _recurringDeltaList[i] = newRecurringDelta;
       }
     }
     notifyListeners();
   }
 
-  void decrementFrequency(int deltaId) async {
+  void decrementVolume(int deltaId) async {
     for (var i = 0; i < _recurringDeltaList.length; i++) {
       if (_recurringDeltaList[i].id == deltaId) {
         RecurringDelta newRecurringDelta = RecurringDelta(
@@ -223,12 +247,13 @@ class ListOfRecurringDeltas extends ChangeNotifier {
             iconSrc: _recurringDeltaList[i].iconSrc,
             deltaInterval: _recurringDeltaList[i].deltaInterval,
             weighting: _recurringDeltaList[i].weighting,
-            remainingFrequency: _recurringDeltaList[i].remainingFrequency - 1,
+            remainingVolume: _recurringDeltaList[i].remainingVolume - 1,
             minimumVolume: _recurringDeltaList[i].minimumVolume,
             effectiveVolume: _recurringDeltaList[i].effectiveVolume,
             optimalVolume: _recurringDeltaList[i].optimalVolume,
             startDate: _recurringDeltaList[i].startDate,
-            completedToday: await DatabaseRecurringDeltaService().isCompletedToday(deltaId));
+            completedToday: await DatabaseRecurringDeltaService()
+                .isCompletedToday(deltaId));
         _recurringDeltaList[i] = newRecurringDelta;
       }
     }
