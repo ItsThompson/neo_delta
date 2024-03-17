@@ -163,6 +163,17 @@ List<DateTime> deltaIntervalStartDateFromDate(
   return list;
 }
 
+DateTime getStartOfNextDeltaInterval(DeltaInterval interval, DateTime startOfCurrentInterval) {
+  switch (interval) {
+    case DeltaInterval.day:
+      return DateTime(startOfCurrentInterval.year, startOfCurrentInterval.month, startOfCurrentInterval.day + 1);
+    case DeltaInterval.week:
+      return startOfCurrentInterval.add(const Duration(days: 7));
+    case DeltaInterval.month:
+      return DateTime(startOfCurrentInterval.year, startOfCurrentInterval.month + 1, 1);
+  }
+}
+
 (DateTime, DateTime) rangeOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
   switch (interval) {
     case DeltaInterval.day:

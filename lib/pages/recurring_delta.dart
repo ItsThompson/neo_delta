@@ -33,19 +33,18 @@ class RecurringDeltaPageData {
       required this.allTimeDeltaPercentage,
       required this.currentMonthDeltaPercentage});
 
-  static Future<RecurringDeltaPageData> getData(int deltaId, BuildContext context) async {
-    RecurringDelta recurringDelta =
-        await DatabaseRecurringDeltaService().getRecurringDeltaById(deltaId, context);
+  static Future<RecurringDeltaPageData> getData(
+      int deltaId, BuildContext context) async {
+    RecurringDelta recurringDelta = await DatabaseRecurringDeltaService()
+        .getRecurringDeltaById(deltaId, context);
 
     double successPercentage = await DatabaseRecurringDeltaService()
         .getRecurringDeltaSuccessRateFromRecurringDelta(recurringDelta);
-    int longestStreak =
-        await DatabaseRecurringDeltaService().getLongestStreakFromRecurringDelta(recurringDelta);
-
+    int longestStreak = await DatabaseRecurringDeltaService()
+        .getLongestStreakFromRecurringDelta(recurringDelta);
 
     double allTimeDeltaPercentage = await DatabaseRecurringDeltaService()
         .getAllTimeDeltaPercentageFromRecurringDelta(recurringDelta);
-
 
     double currentMonthDeltaPercentage = await DatabaseRecurringDeltaService()
         .getThisMonthDeltaPercentageFromRecurringDelta(recurringDelta);
@@ -214,9 +213,28 @@ class _RecurringDeltaPageState extends State<RecurringDeltaPage> {
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
-                    MonthlyProgress(
-                        statsData: StatsData.generateFakeData(
-                            28, 1, -1)) // TODO: Implement shit ykwim
+                    FutureBuilder(
+                        future: StatsData.generateMonthStatsData(
+                            [widget.id], context),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: mainTheme.colorScheme.primary,
+                            ));
+                          }
+
+                          if (snapshot.data == null) {
+                            return const Center(
+                              child: Text('No data'),
+                            );
+                          }
+
+                          return MonthlyProgress(
+                            statsData: snapshot.data!,
+                          );
+                        })
                   ],
                 ),
               ));
