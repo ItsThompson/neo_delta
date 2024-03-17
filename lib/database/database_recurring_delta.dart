@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:neo_delta/database/database.dart';
@@ -52,6 +53,30 @@ class DatabaseRecurringDeltaService {
     }
 
     return out;
+  }
+
+  Future<List<int>> getAllRecurringDeltaIds(BuildContext? context) async {
+    List<int> ids = [];
+
+    if (context != null && context.mounted) {
+      List<RecurringDelta> providerRecurringDeltaList =
+          context.read<ListOfRecurringDeltas>().recurringDeltaList;
+      if (providerRecurringDeltaList.isNotEmpty) {
+        for (var recurringDelta in providerRecurringDeltaList) {
+          ids.add(recurringDelta.id);
+        }
+        return ids;
+      }
+    }
+
+    final db = await _databaseService.db;
+    var data = await db.query("recurring_delta");
+
+    for (var recurringDelta in data) {
+      ids.add(recurringDelta['id'] as int);
+    }
+
+    return ids;
   }
 
   Future<RecurringDelta> getRecurringDeltaById(

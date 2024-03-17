@@ -1,7 +1,9 @@
+import 'dart:js_interop';
 import 'dart:math';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:neo_delta/database/database.dart';
 import 'package:neo_delta/database/database_landmark_delta.dart';
 import 'package:neo_delta/database/database_recurring_delta.dart';
 import 'package:neo_delta/models/delta_progress.dart';
@@ -199,9 +201,11 @@ class StatsData {
   }
 
   static Future<StatsData> generateAllTimeStatsData(List<int> recurringDeltaIds,
-      DateTime startDate, BuildContext context) async {
+      BuildContext context) async {
     // All Time Stats View
     List<(DateTime, double)> progress = []; // (Month, Weighted Delta)
+
+    DateTime startDate = await DatabaseService().getFirstDeltaEntryDate();
 
     DateTime currentIterationDate = startDate;
     DateTime now = DateTime.now();

@@ -1,3 +1,4 @@
+import 'package:neo_delta/models/recurring_delta.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -51,5 +52,29 @@ class DatabaseService {
             FOREIGN KEY ("delta_id") REFERENCES "recurring_delta"("id")
           )
           ''');
+  }
+
+
+  Future<DateTime> getFirstDeltaEntryDate() async {
+    final db = await this.db;
+    var recurringDeltaData = await db.rawQuery("SELECT MIN(id) FROM recurring_delta");
+    var landmarkDeltaData = await db.query("SELECT MIN(id) FROM landmark_delta");
+
+    DateTime earliest = DateTime.now();
+
+    if (recurringDeltaData.isNotEmpty) {
+      DateTime firstRecurringDeltaDate = DateTime.parse(recurringDeltaData[0]["start_date"] as String);
+      earliest = firstRecurringDeltaDate;
+    }
+
+    if (landmarkDeltaData.isNotEmpty) {
+      DateTime firstLandmarkDeltaDate = DateTime.parse(landmarkDeltaData[0]["date_time"] as String);
+
+      if (firstLandmarkDeltaDate.isBefore(earliest)) {
+        earliest = firstLandmarkDeltaDate;
+      }
+    }
+
+    return earliest;
   }
 }
