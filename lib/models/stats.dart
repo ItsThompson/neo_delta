@@ -139,12 +139,12 @@ class StatsData {
       // Numerous RecurringDeltas everyday and potential LandmarkDeltas
       // RecurringDeltas may not have change every day.
 
-      double dayDelta = 0;
+      double dailyWeightedDelta = 0;
 
-      // Landmark Deltas
-      // TODO: Maybe some sort of yellow border around day (For Month and Week View)
+      Map<int, RecurringDelta> recurringDeltas = {};
 
       // Check if landmarkDeltasInCurrentMonth is in current month and current year
+      // Updates landmarkDeltasInCurrentMonth if not (Every first of month)
       if (landmarkDeltasInCurrentMonth.isNotEmpty) {
         DateTime dateTimeOfFirstLandmarkDelta =
             landmarkDeltasInCurrentMonth[0].dateTime;
@@ -156,43 +156,130 @@ class StatsData {
                   startDate.year, startDate.month);
         }
       }
+
+      // Landmark Deltas
+      // TODO: Maybe some sort of yellow border around day (For Month and Week View)
       for (var landmarkDelta in landmarkDeltasInCurrentMonth) {
         if (landmarkDelta.dateTime.day == currentIterationDate.day) {
-          dayDelta += landmarkDelta.weighting;
+          dailyWeightedDelta += landmarkDelta.weighting;
         }
       }
 
       // Recurring Deltas
       for (var recurringDeltaId in recurringDeltaIds) {
-        RecurringDelta recurringDelta = await DatabaseRecurringDeltaService()
-            .getRecurringDeltaById(
-                recurringDeltaId, context.mounted == true ? context : null);
-        int volume = await DatabaseRecurringDeltaService()
-            .getVolumeInIntervalWithStartDate(recurringDeltaId, startDate,
-                context.mounted == true ? context : null); 
+        RecurringDelta recurringDelta;
 
-
-        // currentDate > endOfDeltaIntervalDate
-        if (currentIterationDate.isAfter(endOfDeltaInterval(
-            recurringDelta.deltaInterval, currentIterationDate))) {
-          double delta = calculateDelta(volume, recurringDelta.minimumVolume,
-              recurringDelta.effectiveVolume, recurringDelta.optimalVolume);
-          dayDelta += (delta / volume) * recurringDelta.weighting;
+        if (recurringDeltas[recurringDeltaId] == null) {
+          recurringDelta = await DatabaseRecurringDeltaService()
+              .getRecurringDeltaById(
+                  recurringDeltaId, context.mounted == true ? context : null);
+        } else {
+          recurringDelta = recurringDeltas[recurringDeltaId]!;
         }
+
+        int volumeInInterval = await DatabaseRecurringDeltaService()
+            .getVolumeInIntervalWithStartDate(recurringDeltaId, startDate,
+                context.mounted == true ? context : null);
+
+        double delta = calculateDelta(
+            volumeInInterval,
+            recurringDelta.minimumVolume,
+            recurringDelta.effectiveVolume,
+            recurringDelta.optimalVolume);
+
+        dailyWeightedDelta +=
+            (delta / volumeInInterval) * recurringDelta.weighting;
       }
 
-      progress.add((currentIterationDate, dayDelta));
+      progress.add((currentIterationDate, dailyWeightedDelta));
       currentIterationDate = currentIterationDate.add(const Duration(days: 1));
     }
 
     return StatsData(progress: progress);
   }
 
-  //TODO: Generate All time Stats Data (Monthly)
-  static Future<StatsData> generateAllTimeStatsData(
-      List<int> recurringDeltaIds, DateTime startDate) async {
+  static Future<StatsData> generateAllTimeStatsData(List<int> recurringDeltaIds,
+      DateTime startDate, BuildContext context) async {
     // All Time Stats View
-    List<(DateTime, double)> progress = [];
+    List<(DateTime, double)> progress = []; // (Month, Weighted Delta)
+
+    DateTime currentIterationDate = startDate;
+    DateTime now = DateTime.now();
+    DateTime endDate = DateTime(now.year, now.month, now.day);
+
+    List<LandmarkDelta> landmarkDeltasInCurrentMonth =
+        await DatabaseLandmarkDeltaService()
+            .getAllLandmarkDeltasWithYearAndMonth(
+                startDate.year, startDate.month);
+
+    double monthlyWeightedDelta = 0;
+
+    Map<int, RecurringDelta> recurringDeltas = {};
+
+    // while nextDate <= endDate
+    while (currentIterationDate.isBefore(endDate) ||
+        currentIterationDate.isAtSameMomentAs(
+            DateTime(endDate.year, endDate.month, endDate.day))) {
+      double dailyWeightedDelta = 0;
+
+      if (landmarkDeltasInCurrentMonth.isNotEmpty) {
+        DateTime dateTimeOfFirstLandmarkDelta =
+            landmarkDeltasInCurrentMonth[0].dateTime;
+        if ((dateTimeOfFirstLandmarkDelta.year != currentIterationDate.year) ||
+            (dateTimeOfFirstLandmarkDelta.month !=
+                currentIterationDate.month)) {
+          landmarkDeltasInCurrentMonth = await DatabaseLandmarkDeltaService()
+              .getAllLandmarkDeltasWithYearAndMonth(
+                  startDate.year, startDate.month);
+        }
+      }
+
+      // Landmark Deltas
+      for (var landmarkDelta in landmarkDeltasInCurrentMonth) {
+        if (landmarkDelta.dateTime.day == currentIterationDate.day) {
+          dailyWeightedDelta += landmarkDelta.weighting;
+        }
+      }
+
+      // Recurring Deltas
+      for (var recurringDeltaId in recurringDeltaIds) {
+        RecurringDelta recurringDelta;
+
+        if (recurringDeltas[recurringDeltaId] == null) {
+          recurringDelta = await DatabaseRecurringDeltaService()
+              .getRecurringDeltaById(
+                  recurringDeltaId, context.mounted == true ? context : null);
+        } else {
+          recurringDelta = recurringDeltas[recurringDeltaId]!;
+        }
+
+        int volumeInInterval = await DatabaseRecurringDeltaService()
+            .getVolumeInIntervalWithStartDate(recurringDeltaId, startDate,
+                context.mounted == true ? context : null);
+
+        double delta = calculateDelta(
+            volumeInInterval,
+            recurringDelta.minimumVolume,
+            recurringDelta.effectiveVolume,
+            recurringDelta.optimalVolume);
+
+        dailyWeightedDelta +=
+            (delta / volumeInInterval) * recurringDelta.weighting;
+      }
+
+      if (currentIterationDate ==
+          DateTime(currentIterationDate.year, currentIterationDate.month, 1)) {
+        // current is start of the month
+        progress.add((currentIterationDate, monthlyWeightedDelta));
+        // Add all of this month into progress
+        monthlyWeightedDelta = dailyWeightedDelta;
+        // Reset "monthlyWeightedDelta"
+      } else {
+        monthlyWeightedDelta += dailyWeightedDelta;
+        // Adds to "monthlyWeightedDelta"
+      }
+      currentIterationDate = currentIterationDate.add(const Duration(days: 1));
+    }
 
     return StatsData(progress: progress);
   }

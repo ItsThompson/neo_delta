@@ -405,7 +405,7 @@ class DatabaseRecurringDeltaService {
     return false;
   }
 
-  Future<double> getRecurringDeltaSuccessRateFromRecurringDelta(
+  Future<Map<DateTime, int>> getRecurringDeltaIntervalCountHashMap(
       RecurringDelta recurringDelta) async {
     final List<DeltaProgress> list =
         await getDeltaProgressSortedByRecentToOld(recurringDelta.id);
@@ -419,6 +419,33 @@ class DatabaseRecurringDeltaService {
           recurringDelta.deltaInterval, deltaProgress.completedAt);
       intervalCount.update(beginning, (value) => ++value, ifAbsent: () => 1);
     }
+
+    return intervalCount;
+  }
+
+  Future<Map<DateTime, int>> getRecurringDeltaIntervalCountSplayTreeMap(
+      RecurringDelta recurringDelta) async {
+    final List<DeltaProgress> list =
+        await getDeltaProgressSortedByRecentToOld(recurringDelta.id);
+
+    SplayTreeMap<DateTime, int> intervalCount = SplayTreeMap<DateTime, int>();
+    // Key: Starting DateTime Interval,
+    // Value: Count
+    // SplayTreeMap -> Keys are sorted (Ascending)
+
+    for (final deltaProgress in list) {
+      DateTime beginning = startOfDeltaInterval(
+          recurringDelta.deltaInterval, deltaProgress.completedAt);
+      intervalCount.update(beginning, (value) => ++value, ifAbsent: () => 1);
+    }
+
+    return intervalCount;
+  }
+
+  Future<double> getRecurringDeltaSuccessRateFromRecurringDelta(
+      RecurringDelta recurringDelta) async {
+    Map<DateTime, int> intervalCount =
+        await getRecurringDeltaIntervalCountHashMap(recurringDelta);
 
     int isCompleted = 0;
 
@@ -437,19 +464,8 @@ class DatabaseRecurringDeltaService {
 
   Future<int> getLongestStreakFromRecurringDelta(
       RecurringDelta recurringDelta) async {
-    final List<DeltaProgress> list =
-        await getDeltaProgressSortedByRecentToOld(recurringDelta.id);
-
-    SplayTreeMap<DateTime, int> intervalCount = SplayTreeMap<DateTime, int>();
-    // Key: Starting DateTime Interval,
-    // Value: Count
-    // SplayTreeMap -> Keys are sorted (Ascending)
-
-    for (final deltaProgress in list) {
-      DateTime beginning = startOfDeltaInterval(
-          recurringDelta.deltaInterval, deltaProgress.completedAt);
-      intervalCount.update(beginning, (value) => ++value, ifAbsent: () => 1);
-    }
+    Map<DateTime, int> intervalCount =
+        await getRecurringDeltaIntervalCountSplayTreeMap(recurringDelta);
 
     int longestStreak = 0;
     int currentStreak = 0;
