@@ -98,7 +98,7 @@ class _StatsGraphState extends State<StatsGraph> {
               if (hasLandmarkDelta) {
                 return FlDotCirclePainter(
                     color: mainTheme.colorScheme.inversePrimary);
-                // TODO: Test This
+                // TODO: hasLandmarkDelta
               }
 
               return const FlDotData()

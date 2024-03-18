@@ -37,3 +37,8 @@ https://github.com/ItsThompson/neo_delta/assets/33135895/90a6f0bc-3e7a-4734-a033
   - sqflite: ^2.3.2
   - path: ^1.8.3
   - format: ^1.4.0
+
+## Future Plans
+  -  [ ] Add yellow borders for days with landmark Deltas in the Stat pageviews
+  -  [ ] Social Tab to share progress with friends
+  -  [ ] Filter recurring deltas in stats

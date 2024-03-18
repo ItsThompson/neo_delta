@@ -117,7 +117,7 @@ class _WeeklyProgressState extends State<WeeklyProgress> {
           BarChartRodData(
             width: 30,
             toY: value,
-            // TODO: Test this
+            // TODO: hasLandmarkDelta
             borderSide: hasLandmarkDelta
                 ? BorderSide(color: mainTheme.colorScheme.inversePrimary, width: 2)
                 : null,

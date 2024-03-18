@@ -68,6 +68,7 @@ class _MyWidgetState extends State<MonthlyProgress> {
 
     SizedBox internalBoxGenerator(Color color, Widget? child) {
       // TODO: Add a yellow border for days with LandmarkDelta
+      // TODO: hasLandmarkDelta
       return SizedBox.square(
           dimension: tableCellSize,
           child: Container(
