@@ -9,8 +9,11 @@ Future<StatsData?> _generateStats(BuildContext context) async {
   if (context.mounted) {
     List<int> ids =
         await DatabaseRecurringDeltaService().getAllRecurringDeltaIds(context);
+
     if (context.mounted) {
-      return StatsData.generateAllTimeStatsData(ids, context);
+      StatsData results =
+          await StatsData.generateAllTimeStatsData(ids, context);
+      return results;
     }
   }
   return null;

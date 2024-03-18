@@ -109,13 +109,18 @@ class _WeeklyProgressState extends State<WeeklyProgress> {
       );
 
   List<BarChartGroupData> get barGroups {
-    BarChartGroupData generateBarGroup(int index, double value) {
+    BarChartGroupData generateBarGroup(int index, double value, bool hasLandmarkDelta) {
+
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
             width: 30,
             toY: value,
+            // TODO: Test this
+            borderSide: hasLandmarkDelta
+                ? BorderSide(color: mainTheme.colorScheme.inversePrimary, width: 2)
+                : null,
             borderRadius: value > 0
                 ? const BorderRadius.only(
                     topLeft: Radius.circular(5),
@@ -146,8 +151,16 @@ class _WeeklyProgressState extends State<WeeklyProgress> {
       return widget.statsData.progress[index].$2;
     }
 
+    bool getHasLandmarkDeltaBoolean(index) {
+      if (index + 1 > widget.statsData.progress.length) {
+        return false;
+      }
+
+      return widget.statsData.progress[index].$3;
+    }
+
     // NOTE: ASSUMES THAT THE FIRST ELEM IS MONDAY
     return List.generate(
-        7, (index) => generateBarGroup(index, getValue(index)));
+        7, (index) => generateBarGroup(index, getValue(index), getHasLandmarkDeltaBoolean(index)));
   }
 }

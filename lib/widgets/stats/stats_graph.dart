@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/stats.dart';
 
-// src: https://github.com/imaNNeo/fl_chart/blob/main/example/lib/presentation/samples/line/line_chart_sample2.dart
 class StatsGraph extends StatefulWidget {
   final StatsPageView graphPage;
   final StatsData statsData;
   final int maxX;
   const StatsGraph(
-      {super.key, required this.graphPage, required this.statsData, required this.maxX});
+      {super.key,
+      required this.graphPage,
+      required this.statsData,
+      required this.maxX});
 
   @override
   State<StatsGraph> createState() => _StatsGraphState();
@@ -80,15 +82,28 @@ class _StatsGraphState extends State<StatsGraph> {
       lineBarsData: [
         LineChartBarData(
           spots: List.generate(
-              widget.statsData.progress.length,
-              (index) => FlSpot(
-                  index.toDouble(), widget.statsData.progress[index].$2)),
+            widget.statsData.progress.length,
+            (index) => FlSpot(
+                index.toDouble(), widget.statsData.progress[index].$2)
+          ),
           isCurved: true,
           color: mainTheme.colorScheme.inverseSurface,
           barWidth: 1.5,
           isStrokeCapRound: true,
-          dotData: const FlDotData(
+          dotData: FlDotData(
             show: true,
+            getDotPainter: (spot, percent, barData, index) {
+              final bool hasLandmarkDelta = widget.statsData.progress[index].$3;
+
+              if (hasLandmarkDelta) {
+                return FlDotCirclePainter(
+                    color: mainTheme.colorScheme.inversePrimary);
+                // TODO: Test This
+              }
+
+              return const FlDotData()
+                  .getDotPainter(spot, percent, barData, index);
+            },
           ),
           belowBarData: BarAreaData(show: false),
         ),

@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:neo_delta/database/database.dart';
@@ -44,7 +43,7 @@ class DatabaseRecurringDeltaService {
           effectiveVolume: effectiveVolume,
           optimalVolume: optimalVolume,
           startDate: DateTime.parse(startDate),
-          completedToday: await recurringDeltaOptimalVolumeReached(id),
+          completedToday: await isCompletedToday(id), 
         ),
     ];
 

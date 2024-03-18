@@ -42,7 +42,7 @@ class _AllTimeProgressState extends State<AllTimeProgress> {
 }
 
 class AllTimeRow extends StatefulWidget {
-  final (DateTime, double) data;
+  final (DateTime, double, bool) data; // TODO: yellow border for days with LandmarkDelta
   const AllTimeRow({super.key, required this.data});
 
   @override
@@ -54,6 +54,7 @@ class _AllTimeRowState extends State<AllTimeRow> {
   Widget build(BuildContext context) {
     final DateTime date = widget.data.$1;
     final double progress = widget.data.$2;
+    // final bool hasLandmarkDelta = widget.data.$3;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

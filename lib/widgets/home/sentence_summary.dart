@@ -10,6 +10,7 @@ import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/delta_progress.dart';
 import 'package:neo_delta/models/landmark_delta.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:provider/provider.dart';
 
 Future<String> getRandomPhrase() async {
   Random random = Random();
@@ -124,37 +125,40 @@ class SentenceSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<TextSpan>(
-        future: _sentenceSummaryDynamicGenerator(context),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: CircularProgressIndicator(
-              color: mainTheme.colorScheme.primary,
-            ));
-          }
-
-          return Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(vertical: 25),
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
-              decoration: BoxDecoration(
-                  image: const DecorationImage(
-                      image: AssetImage("assets/navbar/navbarbg.png"),
-                      fit: BoxFit.fill),
-                  color: mainTheme.colorScheme.surface,
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: mainTheme.colorScheme.surface.withOpacity(0.5),
-                      offset: const Offset(5, 10),
-                      blurRadius: 20,
-                    )
-                  ]),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: snapshot.data!,
+    return Consumer<ListOfRecurringDeltas>(builder: (context, value, child) {
+      return FutureBuilder<TextSpan>(
+          future: _sentenceSummaryDynamicGenerator(context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                  child: CircularProgressIndicator(
+                color: mainTheme.colorScheme.primary,
               ));
-        });
+            }
+
+            return Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(vertical: 25),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+                decoration: BoxDecoration(
+                    image: const DecorationImage(
+                        image: AssetImage("assets/navbar/navbarbg.png"),
+                        fit: BoxFit.fill),
+                    color: mainTheme.colorScheme.surface,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: mainTheme.colorScheme.surface.withOpacity(0.5),
+                        offset: const Offset(5, 10),
+                        blurRadius: 20,
+                      )
+                    ]),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: snapshot.data!,
+                ));
+          });
+    });
   }
 }

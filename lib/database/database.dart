@@ -1,4 +1,3 @@
-import 'package:neo_delta/models/recurring_delta.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -13,7 +12,7 @@ class DatabaseService {
   }
 
   Future<Database> initDatabase() async {
-    print( "Database Stored in: ${join(await getDatabasesPath(), 'neo_delta.db')}");
+    // print( "Database Stored in: ${join(await getDatabasesPath(), 'neo_delta.db')}");
     return await openDatabase(join(await getDatabasesPath(), 'neo_delta.db'),
         onCreate: _onCreate, version: 1);
   }
@@ -57,23 +56,24 @@ class DatabaseService {
 
   Future<DateTime> getFirstDeltaEntryDate() async {
     final db = await this.db;
-    var recurringDeltaData = await db.rawQuery("SELECT MIN(id) FROM recurring_delta");
-    var landmarkDeltaData = await db.query("SELECT MIN(id) FROM landmark_delta");
+    var recurringDeltaData = await db.rawQuery("SELECT MIN(id), start_date FROM recurring_delta");
+    var landmarkDeltaData = await db.rawQuery("SELECT MIN(id), date_time FROM landmark_delta");
 
     DateTime earliest = DateTime.now();
 
     if (recurringDeltaData.isNotEmpty) {
       DateTime firstRecurringDeltaDate = DateTime.parse(recurringDeltaData[0]["start_date"] as String);
-      earliest = firstRecurringDeltaDate;
+      earliest = DateTime(firstRecurringDeltaDate.year, firstRecurringDeltaDate.month, firstRecurringDeltaDate.day);
     }
 
     if (landmarkDeltaData.isNotEmpty) {
       DateTime firstLandmarkDeltaDate = DateTime.parse(landmarkDeltaData[0]["date_time"] as String);
 
       if (firstLandmarkDeltaDate.isBefore(earliest)) {
-        earliest = firstLandmarkDeltaDate;
+        earliest = DateTime(firstLandmarkDeltaDate.year, firstLandmarkDeltaDate.month, firstLandmarkDeltaDate.day);
       }
     }
+
 
     return earliest;
   }

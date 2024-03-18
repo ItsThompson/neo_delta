@@ -39,7 +39,7 @@ class RecurringDeltaPageData {
         .getRecurringDeltaById(deltaId, context);
 
     double successPercentage = await DatabaseRecurringDeltaService()
-        .getRecurringDeltaSuccessRateFromRecurringDelta(recurringDelta);
+        .getRecurringDeltaSuccessRateFromRecurringDelta(recurringDelta); 
     int longestStreak = await DatabaseRecurringDeltaService()
         .getLongestStreakFromRecurringDelta(recurringDelta);
 

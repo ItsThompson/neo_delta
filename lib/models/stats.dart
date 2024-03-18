@@ -1,4 +1,3 @@
-import 'dart:js_interop';
 import 'dart:math';
 import 'dart:collection';
 
@@ -74,7 +73,10 @@ class StatsPageViewIndex extends ChangeNotifier {
 }
 
 class StatsData {
-  final List<(DateTime, double)> progress;
+  final List<(DateTime, double, bool)> progress;
+  // DateTime: date of progressItem
+  // double: weighted delta
+  // bool: hasLandmarkDelta
 
   bool hasNegativeValues() {
     for (var i = 0; i < progress.length; i++) {
@@ -88,6 +90,7 @@ class StatsData {
   (double, double) getMinMax() {
     double maximum = progress[0].$2;
     double minimum = progress[0].$2;
+
     for (var i = 1; i < progress.length; i++) {
       if (progress[i].$2 > maximum) {
         maximum = progress[i].$2;
@@ -97,7 +100,7 @@ class StatsData {
       }
     }
 
-    if (hasNegativeValues()) {
+    if (hasNegativeValues() || maximum == minimum) {
       double range = max(maximum.abs(), minimum.abs());
       return (-range, range);
     }
@@ -126,7 +129,7 @@ class StatsData {
       DateTime endDate,
       BuildContext context) async {
     // Month and Week Stats View
-    List<(DateTime, double)> progress = [];
+    List<(DateTime, double, bool)> progress = [];
 
     DateTime currentIterationDate = startDate;
 
@@ -142,6 +145,7 @@ class StatsData {
       // RecurringDeltas may not have change every day.
 
       double dailyWeightedDelta = 0;
+      bool hasLandmarkDelta = false;
 
       Map<int, RecurringDelta> recurringDeltas = {};
 
@@ -160,10 +164,10 @@ class StatsData {
       }
 
       // Landmark Deltas
-      // TODO: Maybe some sort of yellow border around day (For Month and Week View)
       for (var landmarkDelta in landmarkDeltasInCurrentMonth) {
         if (landmarkDelta.dateTime.day == currentIterationDate.day) {
           dailyWeightedDelta += landmarkDelta.weighting;
+          hasLandmarkDelta = true;
         }
       }
 
@@ -189,21 +193,24 @@ class StatsData {
             recurringDelta.effectiveVolume,
             recurringDelta.optimalVolume);
 
-        dailyWeightedDelta +=
-            (delta / volumeInInterval) * recurringDelta.weighting;
+        if (volumeInInterval != 0) {
+          dailyWeightedDelta +=
+              (delta / volumeInInterval) * recurringDelta.weighting;
+        }
       }
 
-      progress.add((currentIterationDate, dailyWeightedDelta));
+      progress
+          .add((currentIterationDate, dailyWeightedDelta, hasLandmarkDelta));
       currentIterationDate = currentIterationDate.add(const Duration(days: 1));
     }
 
     return StatsData(progress: progress);
   }
 
-  static Future<StatsData> generateAllTimeStatsData(List<int> recurringDeltaIds,
-      BuildContext context) async {
+  static Future<StatsData> generateAllTimeStatsData(
+      List<int> recurringDeltaIds, BuildContext context) async {
     // All Time Stats View
-    List<(DateTime, double)> progress = []; // (Month, Weighted Delta)
+    List<(DateTime, double, bool)> progress = []; // DateTime is Month
 
     DateTime startDate = await DatabaseService().getFirstDeltaEntryDate();
 
@@ -224,7 +231,9 @@ class StatsData {
     while (currentIterationDate.isBefore(endDate) ||
         currentIterationDate.isAtSameMomentAs(
             DateTime(endDate.year, endDate.month, endDate.day))) {
+
       double dailyWeightedDelta = 0;
+      bool hasLandmarkDelta = false;
 
       if (landmarkDeltasInCurrentMonth.isNotEmpty) {
         DateTime dateTimeOfFirstLandmarkDelta =
@@ -242,6 +251,7 @@ class StatsData {
       for (var landmarkDelta in landmarkDeltasInCurrentMonth) {
         if (landmarkDelta.dateTime.day == currentIterationDate.day) {
           dailyWeightedDelta += landmarkDelta.weighting;
+          hasLandmarkDelta = true;
         }
       }
 
@@ -267,14 +277,17 @@ class StatsData {
             recurringDelta.effectiveVolume,
             recurringDelta.optimalVolume);
 
-        dailyWeightedDelta +=
-            (delta / volumeInInterval) * recurringDelta.weighting;
+        if (volumeInInterval != 0) {
+          dailyWeightedDelta +=
+              (delta / volumeInInterval) * recurringDelta.weighting;
+        }
       }
 
       if (currentIterationDate ==
           DateTime(currentIterationDate.year, currentIterationDate.month, 1)) {
         // current is start of the month
-        progress.add((currentIterationDate, monthlyWeightedDelta));
+        progress.add(
+            (currentIterationDate, monthlyWeightedDelta, hasLandmarkDelta));
         // Add all of this month into progress
         monthlyWeightedDelta = dailyWeightedDelta;
         // Reset "monthlyWeightedDelta"
@@ -285,23 +298,6 @@ class StatsData {
       currentIterationDate = currentIterationDate.add(const Duration(days: 1));
     }
 
-    return StatsData(progress: progress);
-  }
-
-  factory StatsData.generateFakeData(int length, int maximum, int minimum) {
-    List<(DateTime, double)> progress = [];
-    Random random = Random();
-    double randomNumber;
-    DateTime dateTime =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-
-    for (var i = 0; i < length; i++) {
-      randomNumber = double.parse(
-          (minimum + random.nextDouble() * (maximum - minimum))
-              .toStringAsFixed(2));
-      progress.add((dateTime, randomNumber));
-      dateTime = dateTime.add(const Duration(days: 1));
-    }
     return StatsData(progress: progress);
   }
 
