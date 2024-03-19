@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:neo_delta/services/current_datetime.dart';
 
 class Greeting extends StatelessWidget {
   const Greeting({super.key});
 
-  String getGreeting(DateTime now) {
+  String getGreeting() {
+    DateTime now = currentDateTime();
     String greeting;
     switch (now.hour) {
       case >= 5 && <= 11:
@@ -21,7 +23,7 @@ class Greeting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      "${getGreeting(DateTime.now())}Thompson",
+      "${getGreeting()}Thompson",
       style: const TextStyle(fontSize: 20),
     );
   }

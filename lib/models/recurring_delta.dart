@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:neo_delta/database/database_recurring_delta.dart';
+import 'package:neo_delta/services/current_datetime.dart';
 
 enum DeltaInterval { day, week, month }
 
@@ -80,7 +81,7 @@ DeltaInterval parseStringToDeltaInterval(String deltaIntervalString) {
 }
 
 DateTime endOfCurrentInterval(DeltaInterval interval) {
-  DateTime now = DateTime.now();
+  DateTime now = currentDateTime();
 
   return startOfDeltaInterval(interval, now);
 }
@@ -108,7 +109,7 @@ DateTime endOfDeltaInterval(DeltaInterval interval, DateTime dateTime) {
 }
 
 DateTime startOfCurrentInterval(DeltaInterval interval) {
-  DateTime now = DateTime.now();
+  DateTime now = currentDateTime();
 
   return startOfDeltaInterval(interval, now);
 }
@@ -129,7 +130,7 @@ List<DateTime> deltaIntervalStartDateFromDate(
     DeltaInterval interval, DateTime date) {
   // Get the start DateTime of each DeltaInterval from date til now.
   List<DateTime> list = [];
-  DateTime now = DateTime.now();
+  DateTime now = currentDateTime();
 
   DateTime nextDate = startOfDeltaInterval(interval, date);
 

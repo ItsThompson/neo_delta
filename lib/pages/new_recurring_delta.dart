@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:neo_delta/database/database_recurring_delta.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:neo_delta/services/current_datetime.dart';
 import 'package:neo_delta/widgets/app_bar_with_back_button.dart';
 import 'package:neo_delta/widgets/buttons/inc_dec_with_label.dart';
 import 'package:provider/provider.dart';
@@ -169,7 +170,7 @@ class _NewRecurringPageState extends State<NewRecurringPage> {
                 minimumVolume: minVolume,
                 effectiveVolume: effectiveVolume,
                 optimalVolume: optimalVolume,
-                startDate: DateTime.now(),
+                startDate: currentDateTime(),
                 completedToday: false);
 
             DatabaseRecurringDeltaService()

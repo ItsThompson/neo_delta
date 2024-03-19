@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/stats.dart';
+import 'package:neo_delta/services/current_datetime.dart';
 
 class MonthlyProgress extends StatefulWidget {
   final StatsData statsData;
@@ -13,7 +14,7 @@ class MonthlyProgress extends StatefulWidget {
 class _MyWidgetState extends State<MonthlyProgress> {
   double spacingBetweenEachBox = 15;
   double boxSize = 40;
-  DateTime now = DateTime.now();
+  DateTime now = currentDateTime();
 
   List<String> daysOfTheWeek = [
     'MON',

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:neo_delta/database/database.dart';
 import 'package:neo_delta/models/delta_progress.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:neo_delta/services/current_datetime.dart';
 import 'package:provider/provider.dart';
 
 class DatabaseRecurringDeltaService {
@@ -287,7 +288,7 @@ class DatabaseRecurringDeltaService {
 
   Future<void> insertNewCompletion(int deltaId, BuildContext context) async {
     final db = await _databaseService.db;
-    var now = DateTime.now();
+    var now = currentDateTime();
     await db.rawInsert(
       "INSERT INTO delta_progress (delta_id, completed_at) VALUES (?,?)",
       [deltaId, now.toIso8601String()],
@@ -316,7 +317,7 @@ class DatabaseRecurringDeltaService {
   Future<bool> isCompletedToday(int deltaId) async {
     final list = await getDeltaProgressSortedByRecentToOld(deltaId);
 
-    final now = DateTime.now();
+    final now = currentDateTime();
 
     for (var deltaProgress in list) {
       DateTime deltaProgressCompletedAt = deltaProgress.completedAt;
@@ -353,7 +354,7 @@ class DatabaseRecurringDeltaService {
     final List<DeltaProgress> list =
         await getDeltaProgressSortedByRecentToOld(deltaId);
 
-    DateTime now = DateTime.now();
+    DateTime now = currentDateTime();
     DateTime todayDate = DateTime(now.year, now.month, now.day);
 
     int count = 0;
@@ -566,7 +567,7 @@ class DatabaseRecurringDeltaService {
     }
 
     // List of every startOfInterval since startDate til today.
-    DateTime now = DateTime.now();
+    DateTime now = currentDateTime();
     List<DateTime> listOfStartOfIntervalDateTimes =
         deltaIntervalStartDateFromDate(
             recurringDelta.deltaInterval, DateTime(now.year, now.month, 1));

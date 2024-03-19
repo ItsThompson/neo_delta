@@ -8,6 +8,7 @@ import 'package:neo_delta/database/database_recurring_delta.dart';
 import 'package:neo_delta/models/delta_progress.dart';
 import 'package:neo_delta/models/landmark_delta.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:neo_delta/services/current_datetime.dart';
 
 enum StatsPageView { week, month, allTime }
 
@@ -112,7 +113,7 @@ class StatsData {
     DateTime startOfWeek = startOfCurrentInterval(DeltaInterval.week);
 
     return StatsData._generateDailyStatsDataFromDate(
-        recurringDeltaIds, startOfWeek, DateTime.now(), context);
+        recurringDeltaIds, startOfWeek, currentDateTime(), context);
   }
 
   static Future<StatsData> generateMonthStatsData(
@@ -120,7 +121,7 @@ class StatsData {
     DateTime startOfMonth = startOfCurrentInterval(DeltaInterval.month);
 
     return StatsData._generateDailyStatsDataFromDate(
-        recurringDeltaIds, startOfMonth, DateTime.now(), context);
+        recurringDeltaIds, startOfMonth, currentDateTime(), context);
   }
 
   static Future<StatsData> _generateDailyStatsDataFromDate(
@@ -215,7 +216,7 @@ class StatsData {
     DateTime startDate = await DatabaseService().getFirstDeltaEntryDate();
 
     DateTime currentIterationDate = startDate;
-    DateTime now = DateTime.now();
+    DateTime now = currentDateTime();
     DateTime endDate = DateTime(now.year, now.month, now.day);
 
     List<LandmarkDelta> landmarkDeltasInCurrentMonth =

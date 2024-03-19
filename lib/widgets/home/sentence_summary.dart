@@ -10,6 +10,7 @@ import 'package:neo_delta/main_theme.dart';
 import 'package:neo_delta/models/delta_progress.dart';
 import 'package:neo_delta/models/landmark_delta.dart';
 import 'package:neo_delta/models/recurring_delta.dart';
+import 'package:neo_delta/services/current_datetime.dart';
 import 'package:provider/provider.dart';
 
 Future<String> getRandomPhrase() async {
@@ -22,7 +23,7 @@ Future<String> getRandomPhrase() async {
 }
 
 Future<double> currentMonthDelta(BuildContext context) async {
-  DateTime now = DateTime.now();
+  DateTime now = currentDateTime();
 
   List<LandmarkDelta> landmarkDeltas = await DatabaseLandmarkDeltaService()
       .getAllLandmarkDeltasWithYearAndMonth(now.year, now.month);
