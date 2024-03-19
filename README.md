@@ -8,7 +8,7 @@
  |_| |_|\___|\___/ \__,_|\___|_|\__\__,_|
                                          
 -----------------------------------------------------------------------------------------
-A multi-platform habit tracker mobile app with an emphasis on motivating users through their own progression.
+A multi-platform habit tracker mobile app.
 
 </pre>
 
